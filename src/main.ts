@@ -119,7 +119,7 @@ class Simualtion {
   #lines: Group;
 
   static configs = {
-    boids_number: 50,
+    boids_number: 10,
     light_intensity: 1,
     boid_size: 0.5,
     boid_speed: 0.5,
@@ -141,7 +141,8 @@ class Simualtion {
     this.#boids = new Group();
     this.#lines = new Group();
 
-    this.#create_boids();
+    //this.#create_boids();
+    this.#create_fish_boids();
   }
 
   get boids () {
@@ -334,6 +335,31 @@ class Simualtion {
   }
 
 
+  #create_fish_boids () {
+    const loader = new MTLLoader();
+    loader.setMaterialOptions( {
+      side: DoubleSide
+    } );
+    loader.load( './assets/objects/fish.mtl', ( material ) => {
+      material.preload();
+      const objLoader = new OBJLoader();
+      objLoader.setMaterials( material );
+      objLoader.load( './assets/objects/fish.obj', ( object ) => {
+
+
+        for ( let i = 0; i < Simualtion.configs.boids_number; ++i ) {
+          const fish = object.clone();
+          fish.position.set( Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ) );
+          fish.userData.velocity = new Vector3().randomDirection();
+          fish.userData.acceleration = new Vector3( 0, 0, 0 );
+
+          this.#boids.add( fish );
+        }
+      } )
+    } );
+  }
+
+
   #create_boids () {
 
     for ( let i = 0; i < Simualtion.configs.boids_number; ++i ) {
@@ -346,6 +372,16 @@ class Simualtion {
       this.#boids.add( boid );
     }
   }
+
+
+  recreate_fish_boids () {
+    if ( this.#boids.children.length == 0 ) return;
+
+    this.#boids.remove( ...this.#boids.children );
+
+    this.#create_fish_boids();
+  }
+
 
   recreate_boids () {
 
@@ -394,19 +430,6 @@ function main () {
   const container = simulation.create_container();
   scene.add( container );
 
-  const loader = new MTLLoader();
-  loader.setMaterialOptions( {
-    side: DoubleSide
-  } );
-  loader.load( './assets/objects/fish.mtl', ( material ) => {
-    material.preload();
-    const objLoader = new OBJLoader();
-    objLoader.setMaterials( material );
-    objLoader.load( './assets/objects/fish.obj', ( object ) => {
-      scene.add( object );
-    } )
-  } );
-
   //scene.add( simulation.lines );
   //#endregion
 
@@ -414,8 +437,8 @@ function main () {
   //#region GUI
   const gui = new dat.GUI( { width: Simualtion.configs.gui_width } );
 
-  gui.add( Simualtion.configs, "boids_number", 10, 500, 10 ).onChange( () => simulation.recreate_boids() );
-  gui.add( Simualtion.configs, "boid_size", 0.1, 2, 0.1 ).onChange( () => simulation.recreate_boids() );
+  gui.add( Simualtion.configs, "boids_number", 10, 500, 10 ).onChange( () => simulation.recreate_fish_boids() );
+  gui.add( Simualtion.configs, "boid_size", 0.1, 2, 0.1 ).onChange( () => simulation.recreate_fish_boids() );
   gui.add( Simualtion.configs, "boid_speed", 0.1, 2, 0.1 );
 
   gui.add( Simualtion.configs, "aligment_force", 0, 0.5, 0.05 );
