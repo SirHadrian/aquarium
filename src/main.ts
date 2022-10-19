@@ -193,10 +193,10 @@ class Simualtion {
 
       let distance = boid.position.distanceTo( other.position );
 
-      if ( distance < this.#configs.separation_radius ) {
+      if ( distance < Simualtion.configs.separation_radius ) {
 
         let diff = new Vector3().subVectors( boid.position, other.position );
-        diff.divideScalar( this.#configs.separation_radius );
+        diff.divideScalar( Simualtion.configs.separation_radius );
 
         steering.add( diff );
         total++;
@@ -205,7 +205,7 @@ class Simualtion {
 
     steering.divideScalar( total );
 
-    steering.multiplyScalar( this.#configs.separation_force );
+    steering.multiplyScalar( Simualtion.configs.separation_force );
 
     boid.userData.acceleration.add( steering );
   }
@@ -222,7 +222,7 @@ class Simualtion {
 
       let distance = boid.position.distanceTo( other.position );
 
-      if ( distance < this.#configs.cohesion_radius ) {
+      if ( distance < Simualtion.configs.cohesion_radius ) {
         steering.add( other.position );
         total++;
       }
@@ -230,7 +230,7 @@ class Simualtion {
 
     steering.divideScalar( total );
     steering.sub( boid.position );
-    steering.multiplyScalar( this.#configs.cohesion_force );
+    steering.multiplyScalar( Simualtion.configs.cohesion_force );
 
     boid.userData.acceleration.add( steering );
   }
@@ -247,7 +247,7 @@ class Simualtion {
 
       let distance = boid.position.distanceTo( other.position );
 
-      if ( distance < this.#configs.aligment_radius ) {
+      if ( distance < Simualtion.configs.aligment_radius ) {
         steering.add( other.userData.velocity );
         total++;
       }
@@ -256,7 +256,7 @@ class Simualtion {
     steering.divideScalar( total );
     steering.normalize();
     steering.sub( boid.userData.velocity );
-    steering.multiplyScalar( this.#configs.aligment_force );
+    steering.multiplyScalar( Simualtion.configs.aligment_force );
 
     boid.userData.acceleration.add( steering );
   }
@@ -264,10 +264,10 @@ class Simualtion {
 
   checkEdges ( boid: Object3D ) {
 
-    const negEdge = ( -50 * this.#configs.container_scale ) - this.#configs.boid_size;
-    const posEdge = ( 50 * this.#configs.container_scale ) - this.#configs.boid_size;
+    const negEdge = ( -50 * Simualtion.configs.container_scale ) - Simualtion.configs.boid_size;
+    const posEdge = ( 50 * Simualtion.configs.container_scale ) - Simualtion.configs.boid_size;
 
-    const offset = this.#configs.boid_size;
+    const offset = Simualtion.configs.boid_size;
 
 
     if ( boid.position.x < negEdge ) {
@@ -309,7 +309,7 @@ class Simualtion {
         boid.userData.velocity
           .add( boid.userData.acceleration )
           .normalize()
-          .multiplyScalar( this.#configs.boid_speed )
+          .multiplyScalar( Simualtion.configs.boid_speed )
       );
 
       // Reset acceleration
@@ -334,9 +334,9 @@ class Simualtion {
 
   #create_boids () {
 
-    for ( let i = 0; i < this.#configs.boids_number; ++i ) {
+    for ( let i = 0; i < Simualtion.configs.boids_number; ++i ) {
       const boid = new Boid(
-        new SphereGeometry( this.#configs.boid_size, 10, 10 ),
+        new SphereGeometry( Simualtion.configs.boid_size, 10, 10 ),
         new MeshStandardMaterial( {
           color: Math.random() * 0xffffff,
         } ),
@@ -399,20 +399,20 @@ function main () {
   //#region GUI
   const gui = new dat.GUI( { width: 300 } );
 
-  gui.add( simulation.configs, "boids_number", 10, 500, 10 ).onChange( () => simulation.recreate_boids() );
-  gui.add( simulation.configs, "boid_size", 0.1, 2, 0.1 ).onChange( () => simulation.recreate_boids() );
-  gui.add( simulation.configs, "boid_speed", 0.1, 2, 0.1 );
+  gui.add( Simualtion.configs, "boids_number", 10, 500, 10 ).onChange( () => simulation.recreate_boids() );
+  gui.add( Simualtion.configs, "boid_size", 0.1, 2, 0.1 ).onChange( () => simulation.recreate_boids() );
+  gui.add( Simualtion.configs, "boid_speed", 0.1, 2, 0.1 );
 
-  gui.add( simulation.configs, "aligment_force", 0, 0.5, 0.05 );
-  gui.add( simulation.configs, "cohesion_force", 0, 0.5, 0.05 );
-  gui.add( simulation.configs, "separation_force", 1, 1.5, 0.05 );
+  gui.add( Simualtion.configs, "aligment_force", 0, 0.5, 0.05 );
+  gui.add( Simualtion.configs, "cohesion_force", 0, 0.5, 0.05 );
+  gui.add( Simualtion.configs, "separation_force", 1, 1.5, 0.05 );
 
-  gui.add( simulation.configs, "aligment_radius", 5, 30, 5 );
-  gui.add( simulation.configs, "cohesion_radius", 5, 30, 5 );
-  gui.add( simulation.configs, "separation_radius", 5, 30, 5 );
+  gui.add( Simualtion.configs, "aligment_radius", 5, 30, 5 );
+  gui.add( Simualtion.configs, "cohesion_radius", 5, 30, 5 );
+  gui.add( Simualtion.configs, "separation_radius", 5, 30, 5 );
 
-  gui.add( simulation.configs, "container_scale", 1, 5, 1 ).onChange( () => container.scale.set( simulation.configs.container_scale, simulation.configs.container_scale, simulation.configs.container_scale ) );
-  gui.add( simulation.configs, "container_opacity", 0.1, 1, 0.1 ).onChange( () => container.material.opacity = simulation.configs.container_opacity );
+  gui.add( Simualtion.configs, "container_scale", 1, 5, 1 ).onChange( () => container.scale.set( Simualtion.configs.container_scale, Simualtion.configs.container_scale, Simualtion.configs.container_scale ) );
+  gui.add( Simualtion.configs, "container_opacity", 0.1, 1, 0.1 ).onChange( () => container.material.opacity = Simualtion.configs.container_opacity );
 
 
   //#endregion
