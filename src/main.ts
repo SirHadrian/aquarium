@@ -1,5 +1,6 @@
 import {
   Scene,
+  BoxGeometry,
   CubeTextureLoader,
   Mesh,
   WebGLRenderer,
@@ -164,6 +165,22 @@ class Simualtion {
         'bkg3_back6.png',
       ] );
     return skybox;
+  }
+
+
+  create_container () {
+    const container = new Mesh(
+      new BoxGeometry( 100, 100, 100 ),
+      new MeshStandardMaterial( {
+        transparent: true,
+        opacity: this.#configs.cubeOpacity,
+        color: 0xffffff
+      } )
+    );
+    container.position.set( 0, 0, 0 );
+    container.scale.set( this.#configs.containerSize, this.#configs.containerSize, this.#configs.containerSize );
+
+    return container;
   }
 
 
@@ -351,8 +368,9 @@ function main () {
   // Simualtion
   const simulation = new Simualtion();
 
-  scene.add( simulation.boids );
   scene.background = simulation.initSkyBox();
+  scene.add( simulation.boids );
+  scene.add( simulation.create_container() );
   //scene.add( simulation.lines );
 
   //#endregion
