@@ -17,6 +17,7 @@ import {
   LineBasicMaterial,
   Object3D,
   DoubleSide,
+  Matrix4,
 } from 'three';
 import * as dat from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -308,13 +309,13 @@ class Simualtion {
 
     this.boids.children.forEach( ( boid ) => {
 
-      boid.position.add(
-        boid.userData.velocity
-          .add( boid.userData.acceleration )
-          .normalize()
-          .multiplyScalar( Simualtion.configs.boid_speed )
-      );
-      boid.lookAt( boid.userData.velocity );
+      // boid.position.add(
+      //   boid.userData.velocity
+      //     .add( boid.userData.acceleration )
+      //     .normalize()
+      //     .multiplyScalar( Simualtion.configs.boid_speed )
+      // );
+      //boid.lookAt( boid.userData.velocity );
 
       // Reset acceleration
       boid.userData.acceleration.multiplyScalar( 0 );
@@ -347,6 +348,9 @@ class Simualtion {
       objLoader.setMaterials( material );
       objLoader.load( './assets/objects/fish.obj', ( object ) => {
 
+        
+        
+
 
         for ( let i = 0; i < Simualtion.configs.boids_number; ++i ) {
           const fish = object.clone();
@@ -358,6 +362,15 @@ class Simualtion {
           fish.lookAt( fish.userData.velocity );
 
           this.#boids.add( fish );
+
+          const point = new Boid(
+            new SphereGeometry( Simualtion.configs.boid_size, 10, 10 ),
+            new MeshStandardMaterial( {
+              color: Math.random() * 0xffffff,
+            } ),
+          );
+          point.position.set( fish.position.x, fish.position.y, fish.position.z );
+          this.#boids.add( point );
         }
       } )
     } );
@@ -455,7 +468,7 @@ function main () {
   //   } )
   // } );
 
-  //scene.add( simulation.lines );
+  scene.add( simulation.lines );
   //#endregion
 
 
