@@ -7,6 +7,7 @@ import {
   PerspectiveCamera,
   sRGBEncoding,
   DirectionalLight,
+  AmbientLight,
   ColorRepresentation,
   SphereGeometry,
   MeshStandardMaterial,
@@ -65,7 +66,7 @@ class RendererSetup extends WebGLRenderer {
 }
 
 
-class LightSetup extends DirectionalLight {
+class LightSetup extends AmbientLight {
 
   constructor( scene: Scene, color: ColorRepresentation, intensity: number ) {
 
