@@ -125,6 +125,8 @@ class Simualtion {
     aligment_radius: 10,
     cohesion_radius: 10,
     separation_radius: 10,
+    cubeOpacity: 0.1,
+    containerSize: 1,
   }
 
 
