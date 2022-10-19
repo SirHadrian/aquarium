@@ -17,7 +17,6 @@ import {
   LineBasicMaterial,
   Object3D,
   DoubleSide,
-  Matrix4,
 } from 'three';
 import * as dat from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -309,13 +308,13 @@ class Simualtion {
 
     this.boids.children.forEach( ( boid ) => {
 
-      boid.position.add(
-        boid.userData.velocity
-          .add( boid.userData.acceleration )
-          .normalize()
-          .multiplyScalar( Simualtion.configs.boid_speed )
-      );
-      boid.lookAt( boid.userData.velocity );
+      // boid.position.add(
+      //   boid.userData.velocity
+      //     .add( boid.userData.acceleration )
+      //     .normalize()
+      //     .multiplyScalar( Simualtion.configs.boid_speed )
+      // );
+      // boid.lookAt( boid.userData.velocity );
 
       // Reset acceleration
       boid.userData.acceleration.multiplyScalar( 0 );
@@ -361,8 +360,8 @@ class Simualtion {
           fish.position.set( Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ) );
           fish.userData.velocity = new Vector3().randomDirection();
           fish.userData.acceleration = new Vector3( 0, 0, 0 );
-          
-          fish.lookAt( fish.userData.velocity );
+
+          fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
 
           this.#boids.add( fish );
         }
