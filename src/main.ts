@@ -268,7 +268,7 @@ class Simualtion {
 
     const negEdge = ( -50 * this.#configs.containerSize ) - this.#configs.boid_size;
     const posEdge = ( 50 * this.#configs.containerSize ) - this.#configs.boid_size;
-  
+
     const offset = this.#configs.boid_size;
 
 
@@ -383,7 +383,8 @@ function main () {
 
   scene.background = simulation.initSkyBox();
   scene.add( simulation.boids );
-  scene.add( simulation.create_container() );
+  const container = simulation.create_container();
+  scene.add( container );
   //scene.add( simulation.lines );
 
   //#endregion
@@ -404,6 +405,9 @@ function main () {
   gui.add( simulation.configs, "aligment_radius", 5, 50, 5 );
   gui.add( simulation.configs, "cohesion_radius", 5, 50, 5 );
   gui.add( simulation.configs, "separation_radius", 5, 50, 5 );
+
+  gui.add( simulation.configs, "containerSize", 0.1, 2, 0.1 ).onChange( () => container.scale.set( simulation.configs.containerSize, simulation.configs.containerSize, simulation.configs.containerSize ) );
+  gui.add( simulation.configs, "cubeOpacity", 0.1, 1, 0.1 ).onChange( () => container.material.opacity = simulation.configs.cubeOpacity );
 
 
   //#endregion
