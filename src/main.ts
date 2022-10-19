@@ -120,7 +120,7 @@ class Simualtion {
   #lines: Group;
 
   static configs = {
-    boids_number: 1,
+    boids_number: 10,
     light_intensity: 1,
     boid_size: 0.5,
     boid_speed: 0.5,
@@ -132,7 +132,7 @@ class Simualtion {
     separation_radius: 10,
     container_opacity: 0.1,
     container_scale: 1,
-    container_size: 100,
+    container_size: 50,
     gui_width: 300,
   }
 
@@ -309,13 +309,13 @@ class Simualtion {
 
     this.boids.children.forEach( ( boid ) => {
 
-      // boid.position.add(
-      //   boid.userData.velocity
-      //     .add( boid.userData.acceleration )
-      //     .normalize()
-      //     .multiplyScalar( Simualtion.configs.boid_speed )
-      // );
-      //boid.lookAt( boid.userData.velocity );
+      boid.position.add(
+        boid.userData.velocity
+          .add( boid.userData.acceleration )
+          .normalize()
+          .multiplyScalar( Simualtion.configs.boid_speed )
+      );
+      boid.lookAt( boid.userData.velocity );
 
       // Reset acceleration
       boid.userData.acceleration.multiplyScalar( 0 );
@@ -338,19 +338,21 @@ class Simualtion {
 
 
   #create_fish_boids () {
+
     const loader = new MTLLoader();
+
     loader.setMaterialOptions( {
       side: DoubleSide
     } );
+
     loader.load( './assets/objects/fish.mtl', ( material ) => {
+
       material.preload();
+
       const objLoader = new OBJLoader();
+
       objLoader.setMaterials( material );
-      objLoader.load( './assets/objects/fish.obj', ( object ) => {
-
-        
-        
-
+      objLoader.load( './assets/objects/fish2.obj', ( object ) => {
 
         for ( let i = 0; i < Simualtion.configs.boids_number; ++i ) {
           const fish = object.clone();
@@ -359,18 +361,10 @@ class Simualtion {
           fish.position.set( Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ) );
           fish.userData.velocity = new Vector3().randomDirection();
           fish.userData.acceleration = new Vector3( 0, 0, 0 );
+          
           fish.lookAt( fish.userData.velocity );
 
           this.#boids.add( fish );
-
-          const point = new Boid(
-            new SphereGeometry( Simualtion.configs.boid_size, 10, 10 ),
-            new MeshStandardMaterial( {
-              color: Math.random() * 0xffffff,
-            } ),
-          );
-          point.position.set( fish.position.x, fish.position.y, fish.position.z );
-          this.#boids.add( point );
         }
       } )
     } );
