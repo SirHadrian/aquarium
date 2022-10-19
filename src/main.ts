@@ -19,6 +19,8 @@ import {
 } from 'three';
 import * as dat from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 
 
 
@@ -120,10 +122,10 @@ class Simualtion {
     light_intensity: 1,
     boid_size: 0.5,
     boid_speed: 0.5,
-    aligment_force: 0.1,
+    aligment_force: 0.05,
     cohesion_force: 0.1,
-    separation_force: 1,
-    aligment_radius: 10,
+    separation_force: 1.05,
+    aligment_radius: 15,
     cohesion_radius: 10,
     separation_radius: 10,
     container_opacity: 0.1,
@@ -390,6 +392,16 @@ function main () {
   scene.add( simulation.boids );
   const container = simulation.create_container();
   scene.add( container );
+
+  const loader = new MTLLoader();
+  loader.load( './assets/objects/fish.mtl', ( material ) => {
+    material.preload();
+    const objLoader = new OBJLoader();
+    objLoader.setMaterials( material );
+    objLoader.load( './assets/objects/fish.obj', ( object ) => {
+      scene.add( object );
+    } )
+  } );
 
   //scene.add( simulation.lines );
   //#endregion
