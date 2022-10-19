@@ -322,6 +322,14 @@ class Simualtion {
       this.separation( boid, this.#boids );
 
       this.checkEdges( boid );
+
+      // Draw lines
+      this.#lines.add(
+        LineDirection.create( [
+          boid.position,
+          boid.position.clone().add( boid.userData.velocity.clone().multiplyScalar( 5 ) )
+        ] )
+      );
     } );
   }
 
@@ -385,7 +393,7 @@ function main () {
   scene.add( simulation.boids );
   const container = simulation.create_container();
   scene.add( container );
-  //scene.add( simulation.lines );
+  scene.add( simulation.lines );
 
   //#endregion
 
