@@ -414,8 +414,8 @@ function main () {
   gui.add( simulation.configs, "cohesion_radius", 5, 30, 5 );
   gui.add( simulation.configs, "separation_radius", 5, 30, 5 );
 
-  gui.add( simulation.configs, "containerSize", 1, 5, 1 ).onChange( () => container.scale.set( simulation.configs.container_size, simulation.configs.container_size, simulation.configs.container_size ) );
-  gui.add( simulation.configs, "containerOpacity", 0.1, 1, 0.1 ).onChange( () => container.material.opacity = simulation.configs.container_opacity );
+  gui.add( simulation.configs, "container_size", 1, 5, 1 ).onChange( () => container.scale.set( simulation.configs.container_size, simulation.configs.container_size, simulation.configs.container_size ) );
+  gui.add( simulation.configs, "container_opacity", 0.1, 1, 0.1 ).onChange( () => container.material.opacity = simulation.configs.container_opacity );
 
 
   //#endregion
