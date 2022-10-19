@@ -119,7 +119,7 @@ class Simualtion {
   #lines: Group;
 
   static configs = {
-    boids_number: 10,
+    boids_number: 1,
     light_intensity: 1,
     boid_size: 0.5,
     boid_speed: 0.5,
@@ -314,6 +314,7 @@ class Simualtion {
           .normalize()
           .multiplyScalar( Simualtion.configs.boid_speed )
       );
+      boid.lookAt( boid.userData.velocity );
 
       // Reset acceleration
       boid.userData.acceleration.multiplyScalar( 0 );
@@ -349,9 +350,12 @@ class Simualtion {
 
         for ( let i = 0; i < Simualtion.configs.boids_number; ++i ) {
           const fish = object.clone();
+
+          fish.scale.set( Simualtion.configs.boid_size, Simualtion.configs.boid_size, Simualtion.configs.boid_size );
           fish.position.set( Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ) );
           fish.userData.velocity = new Vector3().randomDirection();
           fish.userData.acceleration = new Vector3( 0, 0, 0 );
+          fish.lookAt( fish.userData.velocity );
 
           this.#boids.add( fish );
         }
@@ -429,6 +433,27 @@ function main () {
   scene.add( simulation.boids );
   const container = simulation.create_container();
   scene.add( container );
+
+
+  // TEst
+  // const loader = new MTLLoader();
+  // loader.setMaterialOptions( {
+  //   side: DoubleSide
+  // } );
+  // loader.load( './assets/objects/fish.mtl', ( material ) => {
+  //   material.preload();
+  //   const objLoader = new OBJLoader();
+  //   objLoader.setMaterials( material );
+  //   objLoader.load( './assets/objects/fish.obj', ( fish ) => {
+
+  //     fish.position.set( 100, 0, 0 );
+  //     fish.userData.velocity = new Vector3( 0, 1, 0 );
+  //     fish.userData.acceleration = new Vector3( 0, 0, 0 );
+  //     fish.lookAt( fish.userData.velocity );
+  //     scene.add( fish );
+
+  //   } )
+  // } );
 
   //scene.add( simulation.lines );
   //#endregion
