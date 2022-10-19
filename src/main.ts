@@ -263,8 +263,8 @@ class Simualtion {
 
   checkEdges ( boid: Object3D ) {
 
-    const negEdge = ( -Simualtion.configs.container_size * Simualtion.configs.container_scale ) - Simualtion.configs.boid_size;
-    const posEdge = ( Simualtion.configs.container_size * Simualtion.configs.container_scale ) - Simualtion.configs.boid_size;
+    const negEdge = ( -1 * Simualtion.configs.container_size / 2 * Simualtion.configs.container_scale ) - Simualtion.configs.boid_size;
+    const posEdge = ( Simualtion.configs.container_size / 2 * Simualtion.configs.container_scale ) - Simualtion.configs.boid_size;
 
     const offset = Simualtion.configs.boid_size;
 
