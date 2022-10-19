@@ -1,5 +1,6 @@
 import {
   Scene,
+  CubeTextureLoader,
   Mesh,
   WebGLRenderer,
   PerspectiveCamera,
@@ -148,6 +149,21 @@ class Simualtion {
 
   get configs () {
     return this.#configs;
+  }
+
+
+  initSkyBox () {
+    const skybox = new CubeTextureLoader()
+      .setPath( './assets/red/' )
+      .load( [
+        'bkg3_right1.png',
+        'bkg3_left2.png',
+        'bkg3_top3.png',
+        'bkg3_bottom4.png',
+        'bkg3_front5.png',
+        'bkg3_back6.png',
+      ] );
+    return skybox;
   }
 
 
@@ -336,6 +352,7 @@ function main () {
   const simulation = new Simualtion();
 
   scene.add( simulation.boids );
+  scene.background = simulation.initSkyBox();
   //scene.add( simulation.lines );
 
   //#endregion
