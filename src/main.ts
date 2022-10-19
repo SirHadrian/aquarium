@@ -97,12 +97,14 @@ class LineDirection {
 
 class Boid extends Mesh {
 
+  #range = 100;
+
   constructor( geometry: SphereGeometry, material: MeshStandardMaterial ) {
     super( geometry, material );
 
-    this.position.set( Math.random() * 200 - 100, Math.random() * 200 - 100, 0 );
+    this.position.set( this.#range * ( Math.random() - 0.5 ), this.#range * ( Math.random() - 0.5 ), this.#range * ( Math.random() - 0.5 ) );
 
-    this.userData.velocity = new Vector3().randomDirection().setZ( 0 );
+    this.userData.velocity = new Vector3().randomDirection();
 
     this.userData.acceleration = new Vector3( 0, 0, 0 );
 
@@ -117,7 +119,6 @@ class Simualtion {
 
   #configs = {
     boids_number: 50,
-    plane_size: 200,
     light_intensity: 1,
     boid_size: 0.5,
     boid_speed: 0.5,
@@ -127,8 +128,8 @@ class Simualtion {
     aligment_radius: 10,
     cohesion_radius: 10,
     separation_radius: 10,
-    cubeOpacity: 0.1,
-    containerSize: 1,
+    container_opacity: 0.1,
+    container_size: 1,
   }
 
 
@@ -173,12 +174,12 @@ class Simualtion {
       new BoxGeometry( 100, 100, 100 ),
       new MeshStandardMaterial( {
         transparent: true,
-        opacity: this.#configs.cubeOpacity,
+        opacity: this.#configs.container_opacity,
         color: 0xffffff
       } )
     );
     container.position.set( 0, 0, 0 );
-    container.scale.set( this.#configs.containerSize, this.#configs.containerSize, this.#configs.containerSize );
+    container.scale.set( this.#configs.container_size, this.#configs.container_size, this.#configs.container_size );
 
     return container;
   }
@@ -266,8 +267,8 @@ class Simualtion {
 
   checkEdges ( boid: Object3D ) {
 
-    const negEdge = ( -50 * this.#configs.containerSize ) - this.#configs.boid_size;
-    const posEdge = ( 50 * this.#configs.containerSize ) - this.#configs.boid_size;
+    const negEdge = ( -50 * this.#configs.container_size ) - this.#configs.boid_size;
+    const posEdge = ( 50 * this.#configs.container_size ) - this.#configs.boid_size;
 
     const offset = this.#configs.boid_size;
 
@@ -393,29 +394,28 @@ function main () {
   scene.add( simulation.boids );
   const container = simulation.create_container();
   scene.add( container );
-  scene.add( simulation.lines );
 
+  //scene.add( simulation.lines );
   //#endregion
 
 
   //#region GUI
   const gui = new dat.GUI( { width: 300 } );
 
-  gui.add( simulation.configs, "plane_size", 100, 500, 50 );
-  gui.add( simulation.configs, "boids_number", 10, 100, 10 ).onChange( () => simulation.recreate_boids() );
+  gui.add( simulation.configs, "boids_number", 10, 500, 10 ).onChange( () => simulation.recreate_boids() );
   gui.add( simulation.configs, "boid_size", 0.1, 2, 0.1 ).onChange( () => simulation.recreate_boids() );
   gui.add( simulation.configs, "boid_speed", 0.1, 2, 0.1 );
 
   gui.add( simulation.configs, "aligment_force", 0, 0.5, 0.05 );
   gui.add( simulation.configs, "cohesion_force", 0, 0.5, 0.05 );
-  gui.add( simulation.configs, "separation_force", 0, 1.5, 0.1 );
+  gui.add( simulation.configs, "separation_force", 1, 1.5, 0.05 );
 
-  gui.add( simulation.configs, "aligment_radius", 5, 50, 5 );
-  gui.add( simulation.configs, "cohesion_radius", 5, 50, 5 );
-  gui.add( simulation.configs, "separation_radius", 5, 50, 5 );
+  gui.add( simulation.configs, "aligment_radius", 5, 30, 5 );
+  gui.add( simulation.configs, "cohesion_radius", 5, 30, 5 );
+  gui.add( simulation.configs, "separation_radius", 5, 30, 5 );
 
-  gui.add( simulation.configs, "containerSize", 0.1, 2, 0.1 ).onChange( () => container.scale.set( simulation.configs.containerSize, simulation.configs.containerSize, simulation.configs.containerSize ) );
-  gui.add( simulation.configs, "cubeOpacity", 0.1, 1, 0.1 ).onChange( () => container.material.opacity = simulation.configs.cubeOpacity );
+  gui.add( simulation.configs, "containerSize", 1, 5, 1 ).onChange( () => container.scale.set( simulation.configs.container_size, simulation.configs.container_size, simulation.configs.container_size ) );
+  gui.add( simulation.configs, "containerOpacity", 0.1, 1, 0.1 ).onChange( () => container.material.opacity = simulation.configs.container_opacity );
 
 
   //#endregion
