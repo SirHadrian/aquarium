@@ -16,6 +16,7 @@ import {
   BufferGeometry,
   LineBasicMaterial,
   Object3D,
+  DoubleSide,
 } from 'three';
 import * as dat from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -394,6 +395,9 @@ function main () {
   scene.add( container );
 
   const loader = new MTLLoader();
+  loader.setMaterialOptions( {
+    side: DoubleSide
+  } );
   loader.load( './assets/objects/fish.mtl', ( material ) => {
     material.preload();
     const objLoader = new OBJLoader();
