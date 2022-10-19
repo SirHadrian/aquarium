@@ -117,7 +117,7 @@ class Simualtion {
   #boids: Group;
   #lines: Group;
 
-  #configs = {
+  static configs = {
     boids_number: 50,
     light_intensity: 1,
     boid_size: 0.5,
@@ -129,7 +129,8 @@ class Simualtion {
     cohesion_radius: 10,
     separation_radius: 10,
     container_opacity: 0.1,
-    container_size: 1,
+    container_scale: 1,
+    container_size: 100,
   }
 
 
@@ -147,10 +148,6 @@ class Simualtion {
 
   get lines () {
     return this.#lines;
-  }
-
-  get configs () {
-    return this.#configs;
   }
 
 
@@ -171,15 +168,15 @@ class Simualtion {
 
   create_container () {
     const container = new Mesh(
-      new BoxGeometry( 100, 100, 100 ),
+      new BoxGeometry( Simualtion.configs.container_size, Simualtion.configs.container_size, Simualtion.configs.container_size ),
       new MeshStandardMaterial( {
         transparent: true,
-        opacity: this.#configs.container_opacity,
+        opacity: Simualtion.configs.container_opacity,
         color: 0xffffff
       } )
     );
     container.position.set( 0, 0, 0 );
-    container.scale.set( this.#configs.container_size, this.#configs.container_size, this.#configs.container_size );
+    container.scale.set( Simualtion.configs.container_scale, Simualtion.configs.container_scale, Simualtion.configs.container_scale );
 
     return container;
   }
@@ -267,8 +264,8 @@ class Simualtion {
 
   checkEdges ( boid: Object3D ) {
 
-    const negEdge = ( -50 * this.#configs.container_size ) - this.#configs.boid_size;
-    const posEdge = ( 50 * this.#configs.container_size ) - this.#configs.boid_size;
+    const negEdge = ( -50 * this.#configs.container_scale ) - this.#configs.boid_size;
+    const posEdge = ( 50 * this.#configs.container_scale ) - this.#configs.boid_size;
 
     const offset = this.#configs.boid_size;
 
@@ -414,7 +411,7 @@ function main () {
   gui.add( simulation.configs, "cohesion_radius", 5, 30, 5 );
   gui.add( simulation.configs, "separation_radius", 5, 30, 5 );
 
-  gui.add( simulation.configs, "container_size", 1, 5, 1 ).onChange( () => container.scale.set( simulation.configs.container_size, simulation.configs.container_size, simulation.configs.container_size ) );
+  gui.add( simulation.configs, "container_scale", 1, 5, 1 ).onChange( () => container.scale.set( simulation.configs.container_scale, simulation.configs.container_scale, simulation.configs.container_scale ) );
   gui.add( simulation.configs, "container_opacity", 0.1, 1, 0.1 ).onChange( () => container.material.opacity = simulation.configs.container_opacity );
 
 
