@@ -97,12 +97,10 @@ class LineDirection {
 
 class Boid extends Mesh {
 
-  #range = 100;
-
   constructor( geometry: SphereGeometry, material: MeshStandardMaterial ) {
     super( geometry, material );
 
-    this.position.set( this.#range * ( Math.random() - 0.5 ), this.#range * ( Math.random() - 0.5 ), this.#range * ( Math.random() - 0.5 ) );
+    this.position.set( Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ) );
 
     this.userData.velocity = new Vector3().randomDirection();
 
@@ -131,6 +129,7 @@ class Simualtion {
     container_opacity: 0.1,
     container_scale: 1,
     container_size: 100,
+    gui_width: 300,
   }
 
 
@@ -264,8 +263,8 @@ class Simualtion {
 
   checkEdges ( boid: Object3D ) {
 
-    const negEdge = ( -50 * Simualtion.configs.container_scale ) - Simualtion.configs.boid_size;
-    const posEdge = ( 50 * Simualtion.configs.container_scale ) - Simualtion.configs.boid_size;
+    const negEdge = ( -Simualtion.configs.container_size * Simualtion.configs.container_scale ) - Simualtion.configs.boid_size;
+    const posEdge = ( Simualtion.configs.container_size * Simualtion.configs.container_scale ) - Simualtion.configs.boid_size;
 
     const offset = Simualtion.configs.boid_size;
 
@@ -397,7 +396,7 @@ function main () {
 
 
   //#region GUI
-  const gui = new dat.GUI( { width: 300 } );
+  const gui = new dat.GUI( { width: Simualtion.configs.gui_width } );
 
   gui.add( Simualtion.configs, "boids_number", 10, 500, 10 ).onChange( () => simulation.recreate_boids() );
   gui.add( Simualtion.configs, "boid_size", 0.1, 2, 0.1 ).onChange( () => simulation.recreate_boids() );
