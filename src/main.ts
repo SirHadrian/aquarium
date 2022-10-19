@@ -6,7 +6,6 @@ import {
   WebGLRenderer,
   PerspectiveCamera,
   sRGBEncoding,
-  DirectionalLight,
   AmbientLight,
   ColorRepresentation,
   SphereGeometry,
@@ -267,21 +266,34 @@ class Simualtion {
 
   checkEdges ( boid: Object3D ) {
 
-    const width = this.#configs.plane_size / 2;
-    const height = this.#configs.plane_size / 2;
+    const negEdge = ( -50 * this.#configs.containerSize ) - this.#configs.boid_size;
+    const posEdge = ( 50 * this.#configs.containerSize ) - this.#configs.boid_size;
+  
+    const offset = this.#configs.boid_size;
 
-    // x col
-    if ( boid.position.x < -width ) {
-      boid.position.x = width;
-    } else if ( boid.position.x > width ) {
-      boid.position.x = -width;
+
+    if ( boid.position.x < negEdge ) {
+      boid.position.x += offset;
+      boid.userData.velocity.x *= -1;
+    } else if ( boid.position.x > posEdge ) {
+      boid.position.x -= offset;
+      boid.userData.velocity.x *= -1;
     }
 
-    // y col
-    if ( boid.position.y < -height ) {
-      boid.position.y = height;
-    } else if ( boid.position.y > height ) {
-      boid.position.y = -height;
+    if ( boid.position.y < negEdge ) {
+      boid.position.y += offset;
+      boid.userData.velocity.y *= -1;
+    } else if ( boid.position.y > posEdge ) {
+      boid.position.y -= offset;
+      boid.userData.velocity.y *= -1;
+    }
+
+    if ( boid.position.z < negEdge ) {
+      boid.position.z += offset;
+      boid.userData.velocity.z *= -1;
+    } else if ( boid.position.z > posEdge ) {
+      boid.position.z -= offset;
+      boid.userData.velocity.z *= -1;
     }
   }
 
