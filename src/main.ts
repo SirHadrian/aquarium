@@ -272,8 +272,6 @@ class Simualtion {
 
   animateBalls () {
 
-    if ( this.fish.children.length == 0 ) return;
-
     this.fish.children.forEach( ( boid ) => {
 
       boid.position.add(
