@@ -356,7 +356,7 @@ class Simualtion {
         for ( let i = 0; i < Simualtion.configs.boids_number / 2; ++i ) {
           const fish = object.clone();
 
-          fish.scale.set( Simualtion.configs.boid_size + 1.3, Simualtion.configs.boid_size + 1.3, Simualtion.configs.boid_size + 1.3 );
+          fish.scale.set( Simualtion.configs.boid_size + 1.2, Simualtion.configs.boid_size + 1.2, Simualtion.configs.boid_size + 1.2 );
           fish.position.set( Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ) );
           fish.userData.velocity = new Vector3().randomDirection();
           fish.userData.acceleration = new Vector3( 0, 0, 0 );
@@ -375,6 +375,29 @@ class Simualtion {
 
       objLoader.setMaterials( material );
       objLoader.load( './assets/objects/fish_2/fish.obj', ( object ) => {
+
+        for ( let i = 0; i < Simualtion.configs.boids_number / 2; ++i ) {
+          const fish = object.clone();
+
+          fish.scale.set( Simualtion.configs.boid_size, Simualtion.configs.boid_size, Simualtion.configs.boid_size );
+          fish.position.set( Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ) );
+          fish.userData.velocity = new Vector3().randomDirection();
+          fish.userData.acceleration = new Vector3( 0, 0, 0 );
+
+          fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
+
+          this.#boids.add( fish );
+        }
+      } )
+    } );
+
+    loader.load( './assets/objects/fish_3/Shark.mtl', ( material ) => {
+      material.preload();
+
+      const objLoader = new OBJLoader();
+
+      objLoader.setMaterials( material );
+      objLoader.load( './assets/objects/fish_3/Shark.obj', ( object ) => {
 
         for ( let i = 0; i < Simualtion.configs.boids_number / 2; ++i ) {
           const fish = object.clone();
