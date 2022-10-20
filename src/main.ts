@@ -131,7 +131,7 @@ class Simualtion {
     separation_radius: 10,
     container_opacity: 0.1,
     container_scale: 1,
-    container_size: 50,
+    container_size: 100,
     gui_width: 300,
   }
 
@@ -308,13 +308,13 @@ class Simualtion {
 
     this.boids.children.forEach( ( boid ) => {
 
-      // boid.position.add(
-      //   boid.userData.velocity
-      //     .add( boid.userData.acceleration )
-      //     .normalize()
-      //     .multiplyScalar( Simualtion.configs.boid_speed )
-      // );
-      // boid.lookAt( boid.userData.velocity );
+      boid.position.add(
+        boid.userData.velocity
+          .add( boid.userData.acceleration )
+          .normalize()
+          .multiplyScalar( Simualtion.configs.boid_speed )
+      );
+      boid.lookAt( boid.position.clone().add( boid.userData.velocity ) );
 
       // Reset acceleration
       boid.userData.acceleration.multiplyScalar( 0 );
@@ -344,16 +344,39 @@ class Simualtion {
       side: DoubleSide
     } );
 
-    loader.load( './assets/objects/fish.mtl', ( material ) => {
+    loader.load( './assets/objects/fish_1/fish.mtl', ( material ) => {
 
       material.preload();
 
       const objLoader = new OBJLoader();
 
       objLoader.setMaterials( material );
-      objLoader.load( './assets/objects/fish2.obj', ( object ) => {
+      objLoader.load( './assets/objects/fish_1/fish.obj', ( object ) => {
 
-        for ( let i = 0; i < Simualtion.configs.boids_number; ++i ) {
+        for ( let i = 0; i < Simualtion.configs.boids_number / 2; ++i ) {
+          const fish = object.clone();
+
+          fish.scale.set( Simualtion.configs.boid_size + 1.3, Simualtion.configs.boid_size + 1.3, Simualtion.configs.boid_size + 1.3 );
+          fish.position.set( Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ) );
+          fish.userData.velocity = new Vector3().randomDirection();
+          fish.userData.acceleration = new Vector3( 0, 0, 0 );
+
+          fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
+
+          this.#boids.add( fish );
+        }
+      } )
+    } );
+
+    loader.load( './assets/objects/fish_2/fish.mtl', ( material ) => {
+      material.preload();
+
+      const objLoader = new OBJLoader();
+
+      objLoader.setMaterials( material );
+      objLoader.load( './assets/objects/fish_2/fish.obj', ( object ) => {
+
+        for ( let i = 0; i < Simualtion.configs.boids_number / 2; ++i ) {
           const fish = object.clone();
 
           fish.scale.set( Simualtion.configs.boid_size, Simualtion.configs.boid_size, Simualtion.configs.boid_size );
@@ -461,7 +484,7 @@ function main () {
   //   } )
   // } );
 
-  scene.add( simulation.lines );
+  //scene.add( simulation.lines );
   //#endregion
 
 
