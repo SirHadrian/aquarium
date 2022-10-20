@@ -8,13 +8,9 @@ import {
   sRGBEncoding,
   AmbientLight,
   ColorRepresentation,
-  SphereGeometry,
   MeshStandardMaterial,
   Vector3,
   Group,
-  Line,
-  BufferGeometry,
-  LineBasicMaterial,
   Object3D,
   DoubleSide,
 } from 'three';
@@ -80,46 +76,14 @@ class LightSetup extends AmbientLight {
 }
 
 
-class LineDirection {
-
-  constructor() {
-
-  }
-
-  static create ( points: Vector3[] ) {
-    const line = new Line(
-      new BufferGeometry().setFromPoints( points ),
-      new LineBasicMaterial( {
-        color: 0xff00ff
-      } )
-    );
-    return line;
-  }
-}
-
-
-class Boid extends Mesh {
-
-  constructor( geometry: SphereGeometry, material: MeshStandardMaterial ) {
-    super( geometry, material );
-
-    this.position.set( Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ) );
-
-    this.userData.velocity = new Vector3().randomDirection();
-
-    this.userData.acceleration = new Vector3( 0, 0, 0 );
-
-  }
-}
-
-
 class Simualtion {
 
-  #boids: Group;
+  #fish: Group;
+  #sharks: Group;
   #lines: Group;
 
   static configs = {
-    boids_number: 10,
+    fish_number: 10,
     sharks_number: 2,
     light_intensity: 1,
     boid_size: 1,
@@ -139,15 +103,20 @@ class Simualtion {
 
   constructor() {
 
-    this.#boids = new Group();
+    this.#fish = new Group();
     this.#lines = new Group();
+    this.#sharks = new Group();
 
-    //this.#create_boids();
-    this.#create_fish_boids();
+    this.#create_sharks();
+    this.#create_fish();
   }
 
-  get boids () {
-    return this.#boids;
+  get fish () {
+    return this.#fish;
+  }
+
+  get sharks () {
+    return this.#sharks;
   }
 
   get lines () {
@@ -302,12 +271,9 @@ class Simualtion {
 
   animateBalls () {
 
-    // Delete lines from scene
-    this.#lines.remove( ...this.#lines.children );
+    if ( this.fish.children.length == 0 ) return;
 
-    if ( this.boids.children.length == 0 ) return;
-
-    this.boids.children.forEach( ( boid ) => {
+    this.fish.children.forEach( ( boid ) => {
 
       boid.position.add(
         boid.userData.velocity
@@ -320,24 +286,19 @@ class Simualtion {
       // Reset acceleration
       boid.userData.acceleration.multiplyScalar( 0 );
 
-      this.aligment( boid, this.#boids );
-      this.cohesion( boid, this.#boids );
-      this.separation( boid, this.#boids );
+      this.aligment( boid, this.#fish );
+      this.cohesion( boid, this.#fish );
+      this.separation( boid, this.#fish );
 
       this.checkEdges( boid );
 
-      // Draw lines
-      this.#lines.add(
-        LineDirection.create( [
-          boid.position,
-          boid.position.clone().add( boid.userData.velocity.clone().multiplyScalar( 5 ) )
-        ] )
-      );
     } );
+
+    // TODO - sharks movement
   }
 
 
-  #create_fish_boids () {
+  #create_fish () {
 
     const loader = new MTLLoader();
 
@@ -354,13 +315,13 @@ class Simualtion {
       objLoader.setMaterials( material );
       objLoader.load( './assets/objects/fish_1/fish.obj', ( object ) => {
 
-        for ( let i = 0; i < Simualtion.configs.boids_number / 2; ++i ) {
+        for ( let i = 0; i < Simualtion.configs.fish_number / 2; ++i ) {
           const fish = object.clone();
 
           fish.scale.set(
-            Simualtion.configs.boid_size + 1.2,
-            Simualtion.configs.boid_size + 1.2,
-            Simualtion.configs.boid_size + 1.2
+            Simualtion.configs.boid_size + 1.5,
+            Simualtion.configs.boid_size + 1.5,
+            Simualtion.configs.boid_size + 1.5
           );
 
           fish.position.set(
@@ -374,7 +335,7 @@ class Simualtion {
 
           fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
 
-          this.#boids.add( fish );
+          this.#fish.add( fish );
         }
       } )
     } );
@@ -387,7 +348,7 @@ class Simualtion {
       objLoader.setMaterials( material );
       objLoader.load( './assets/objects/fish_2/fish.obj', ( object ) => {
 
-        for ( let i = 0; i < Simualtion.configs.boids_number / 2; ++i ) {
+        for ( let i = 0; i < Simualtion.configs.fish_number / 2; ++i ) {
           const fish = object.clone();
 
           fish.scale.set(
@@ -407,9 +368,19 @@ class Simualtion {
 
           fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
 
-          this.#boids.add( fish );
+          this.#fish.add( fish );
         }
       } )
+    } );
+  }
+
+
+  #create_sharks () {
+
+    const loader = new MTLLoader();
+
+    loader.setMaterialOptions( {
+      side: DoubleSide
     } );
 
     loader.load( './assets/objects/fish_3/Shark.mtl', ( material ) => {
@@ -423,50 +394,41 @@ class Simualtion {
         for ( let i = 0; i < Simualtion.configs.sharks_number; ++i ) {
           const fish = object.clone();
 
-          fish.scale.set( Simualtion.configs.boid_size, Simualtion.configs.boid_size, Simualtion.configs.boid_size );
-          fish.position.set( Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ), Simualtion.configs.container_size * ( Math.random() - 0.5 ) );
+          fish.scale.set(
+            Simualtion.configs.boid_size + 1.6,
+            Simualtion.configs.boid_size + 1.6,
+            Simualtion.configs.boid_size + 1.6
+          );
+
+          fish.position.set(
+            Simualtion.configs.container_size * ( Math.random() - 0.5 ),
+            Simualtion.configs.container_size * ( Math.random() - 0.5 ),
+            Simualtion.configs.container_size * ( Math.random() - 0.5 )
+          );
+
           fish.userData.velocity = new Vector3().randomDirection();
           fish.userData.acceleration = new Vector3( 0, 0, 0 );
 
           fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
 
-          this.#boids.add( fish );
+          this.#sharks.add( fish );
         }
       } )
     } );
   }
 
 
-  #create_boids () {
-
-    for ( let i = 0; i < Simualtion.configs.boids_number; ++i ) {
-      const boid = new Boid(
-        new SphereGeometry( Simualtion.configs.boid_size, 10, 10 ),
-        new MeshStandardMaterial( {
-          color: Math.random() * 0xffffff,
-        } ),
-      );
-      this.#boids.add( boid );
-    }
-  }
-
-
-  recreate_fish_boids () {
-    if ( this.#boids.children.length == 0 ) return;
-
-    this.#boids.remove( ...this.#boids.children );
-
-    this.#create_fish_boids();
-  }
-
-
   recreate_boids () {
+    if ( this.#fish.children.length == 0 ) return;
 
-    if ( this.#boids.children.length == 0 ) return;
+    this.#fish.remove( ...this.#fish.children );
+    this.#create_fish();
 
-    this.#boids.remove( ...this.#boids.children );
+    if ( this.#sharks.children.length == 0 ) return;
 
-    this.#create_boids();
+    this.sharks.remove( ...this.#sharks.children );
+    this.#create_sharks();
+
   }
 }
 
@@ -503,7 +465,10 @@ function main () {
   const simulation = new Simualtion();
 
   scene.background = simulation.initSkyBox();
-  scene.add( simulation.boids );
+
+  scene.add( simulation.fish );
+  scene.add( simulation.sharks );
+
   const container = simulation.create_container();
   scene.add( container );
 
@@ -514,9 +479,9 @@ function main () {
   //#region GUI
   const gui = new dat.GUI( { width: Simualtion.configs.gui_width } );
 
-  gui.add( Simualtion.configs, "boids_number", 10, 500, 10 ).onChange( () => simulation.recreate_fish_boids() );
-  gui.add( Simualtion.configs, "sharks_number", 1, 10, 1 ).onChange( () => simulation.recreate_fish_boids() );
-  gui.add( Simualtion.configs, "boid_size", 0.1, 2, 0.1 ).onChange( () => simulation.recreate_fish_boids() );
+  gui.add( Simualtion.configs, "fish_number", 10, 500, 10 ).onChange( () => simulation.recreate_boids() );
+  gui.add( Simualtion.configs, "sharks_number", 1, 10, 1 ).onChange( () => simulation.recreate_boids() );
+  gui.add( Simualtion.configs, "boid_size", 0.1, 2, 0.1 ).onChange( () => simulation.recreate_boids() );
   gui.add( Simualtion.configs, "boid_speed", 0.1, 2, 0.1 );
 
   gui.add( Simualtion.configs, "aligment_force", 0, 0.5, 0.05 );
