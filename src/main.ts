@@ -87,7 +87,8 @@ class Simualtion {
     sharks_number: 2,
     light_intensity: 1,
     boid_size: 0.5,
-    boid_speed: 0.5,
+    fish_speed: 0.5,
+    shark_speed: 0.3,
     aligment_force: 0.05,
     cohesion_force: 0.1,
     separation_force: 1.05,
@@ -279,7 +280,7 @@ class Simualtion {
         boid.userData.velocity
           .add( boid.userData.acceleration )
           .normalize()
-          .multiplyScalar( Simualtion.configs.boid_speed )
+          .multiplyScalar( Simualtion.configs.fish_speed )
       );
       boid.lookAt( boid.position.clone().add( boid.userData.velocity ) );
 
@@ -303,7 +304,7 @@ class Simualtion {
         boid.userData.velocity
           .add( boid.userData.acceleration )
           .normalize()
-          .multiplyScalar( Simualtion.configs.boid_speed )
+          .multiplyScalar( Simualtion.configs.shark_speed )
       );
       boid.lookAt( boid.position.clone().add( boid.userData.velocity ) );
 
@@ -500,8 +501,11 @@ function main () {
 
   gui.add( Simualtion.configs, "fish_number", 10, 500, 10 ).onChange( () => simulation.recreate_boids() );
   gui.add( Simualtion.configs, "sharks_number", 1, 10, 1 ).onChange( () => simulation.recreate_boids() );
+
   gui.add( Simualtion.configs, "boid_size", 0.1, 2, 0.1 ).onChange( () => simulation.recreate_boids() );
-  gui.add( Simualtion.configs, "boid_speed", 0.1, 2, 0.1 );
+
+  gui.add( Simualtion.configs, "fish_speed", 0.1, 2, 0.1 );
+  gui.add( Simualtion.configs, "shark_speed", 0.1, 2, 0.1 );
 
   gui.add( Simualtion.configs, "aligment_force", 0, 0.5, 0.05 );
   gui.add( Simualtion.configs, "cohesion_force", 0, 0.5, 0.05 );
