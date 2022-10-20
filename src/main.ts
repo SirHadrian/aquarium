@@ -86,7 +86,7 @@ class Simualtion {
     fish_number: 10,
     sharks_number: 2,
     light_intensity: 1,
-    boid_size: 1,
+    boid_size: 0.5,
     boid_speed: 0.5,
     aligment_force: 0.05,
     cohesion_force: 0.1,
@@ -290,11 +290,30 @@ class Simualtion {
       this.cohesion( boid, this.#fish );
       this.separation( boid, this.#fish );
 
+      // TODO run from sharks
+
       this.checkEdges( boid );
 
     } );
 
-    // TODO - sharks movement
+
+    this.sharks.children.forEach( ( boid ) => {
+
+      boid.position.add(
+        boid.userData.velocity
+          .add( boid.userData.acceleration )
+          .normalize()
+          .multiplyScalar( Simualtion.configs.boid_speed )
+      );
+      boid.lookAt( boid.position.clone().add( boid.userData.velocity ) );
+
+
+      // TODO run after fish 
+
+
+      this.checkEdges( boid );
+    } );
+
   }
 
 
