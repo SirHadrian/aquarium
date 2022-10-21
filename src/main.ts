@@ -344,41 +344,9 @@ class Simualtion {
   }
 
 
-  #run_after_fish ( boid: Object3D ) {
+  #seek_fish ( boid: Object3D ) {
 
-    let steering = new Vector3( 0, 0, 0 );
 
-    if ( this.fish_type_1.children.length <= 1 ) return steering;
-
-    if ( this.fish_type_2.children.length <= 1 ) return steering;
-
-    let total = 0;
-
-    this.fish_type_1.children.forEach( ( other ) => {
-
-      let distance = boid.position.distanceTo( other.position );
-
-      if ( distance < Simualtion.configs.shark_seek_radius ) {
-        steering.add( other.position );
-        total++;
-      }
-    } );
-
-    this.fish_type_2.children.forEach( ( other ) => {
-
-      let distance = boid.position.distanceTo( other.position );
-
-      if ( distance < Simualtion.configs.shark_seek_radius ) {
-        steering.add( other.position );
-        total++;
-      }
-    } );
-
-    steering.divideScalar( total );
-    steering.sub( boid.position );
-    steering.multiplyScalar( Simualtion.configs.cohesion_force );
-
-    return steering;
   }
 
 
@@ -395,6 +363,9 @@ class Simualtion {
     // Reset acceleration
     boid.userData.acceleration.multiplyScalar( 0 );
 
+    // const seek_fish = this.#seek_fish( boid );
+    // boid.userData.acceleration.add( seek_fish );
+
     const ground_avoidance = this.apply_ground_avoidance( boid );
     boid.userData.acceleration.add( ground_avoidance );
 
@@ -406,7 +377,7 @@ class Simualtion {
 
 
 
-  animateBoids () {
+  animate_boids () {
 
     this.fish_type_1.children.forEach( ( boid ) => {
       this.#calculate_fish_status( boid, this.fish_type_1 );
@@ -652,7 +623,7 @@ function main () {
   // Animation loop
   const animate = () => {
 
-    simulation.animateBoids();
+    simulation.animate_boids();
 
     renderer.render( scene, camera );
     requestAnimationFrame( animate );
