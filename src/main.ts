@@ -282,7 +282,7 @@ class Simualtion {
 
     const position = boid.position;
 
-    const ground = -Simualtion.configs.container_size;
+    const ground = -( Simualtion.configs.container_size / 2 );
 
     let force = new Vector3( 0, 0, 0 );
 
