@@ -156,11 +156,13 @@ class Simualtion {
   }
 
 
-  separation ( boid: Object3D, boids: Group ) {
+  separation ( boid: Object3D, boids: Group ): Vector3 {
 
-    if ( boids.children.length <= 1 ) return;
 
     let steering = new Vector3( 0, 0, 0 );
+
+    if ( boids.children.length <= 1 ) return steering;
+
     let total = 0;
 
     boids.children.forEach( ( other ) => {
@@ -181,15 +183,17 @@ class Simualtion {
 
     steering.multiplyScalar( Simualtion.configs.separation_force );
 
-    boid.userData.acceleration.add( steering );
+    return steering;
   }
 
 
-  cohesion ( boid: Object3D, boids: Group ) {
+  cohesion ( boid: Object3D, boids: Group ): Vector3 {
 
-    if ( boids.children.length <= 1 ) return;
 
     let steering = new Vector3( 0, 0, 0 );
+
+    if ( boids.children.length <= 1 ) return steering;
+
     let total = 0;
 
     boids.children.forEach( ( other ) => {
@@ -206,15 +210,17 @@ class Simualtion {
     steering.sub( boid.position );
     steering.multiplyScalar( Simualtion.configs.cohesion_force );
 
-    boid.userData.acceleration.add( steering );
+    return steering;
   }
 
 
-  aligment ( boid: Object3D, boids: Group ) {
+  aligment ( boid: Object3D, boids: Group ): Vector3 {
 
-    if ( boids.children.length <= 1 ) return;
 
     let steering = new Vector3( 0, 0, 0 );
+
+    if ( boids.children.length <= 1 ) return steering;
+
     let total = 0;
 
     boids.children.forEach( ( other ) => {
@@ -232,7 +238,7 @@ class Simualtion {
     steering.sub( boid.userData.velocity );
     steering.multiplyScalar( Simualtion.configs.aligment_force );
 
-    boid.userData.acceleration.add( steering );
+    return steering;
   }
 
 
@@ -285,9 +291,14 @@ class Simualtion {
       // Reset acceleration
       boid.userData.acceleration.multiplyScalar( 0 );
 
-      this.aligment( boid, this.#fish );
-      this.cohesion( boid, this.#fish );
-      this.separation( boid, this.#fish );
+      const aligment = this.aligment( boid, this.#fish );
+      boid.userData.acceleration.add( aligment );
+
+      const cohesion = this.cohesion( boid, this.#fish );
+      boid.userData.acceleration.add( cohesion );
+
+      const separation = this.separation( boid, this.#fish );
+      boid.userData.acceleration.add( separation );
 
       // TODO run from sharks
 
