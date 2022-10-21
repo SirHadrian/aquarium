@@ -274,6 +274,24 @@ class Simualtion {
     } else if ( boid.position.z > depth ) {
       boid.position.z = -depth;
     }
+
+  }
+
+
+  apply_ground_avoidance ( boid: Object3D ): Vector3 {
+
+    const position = boid.position;
+
+    const ground = -Simualtion.configs.container_size;
+
+    let force = new Vector3( 0, 0, 0 );
+
+    if ( position.y < ground + 20 ) {
+      force = new Vector3( 0, 10 - position.y, 0 );
+    } else if ( position.y > ground + 30 ) {
+      force = new Vector3( 0, position.y - 50, 0 );
+    }
+    return force;
   }
 
 
@@ -282,6 +300,7 @@ class Simualtion {
     let aligment = new Vector3( 0, 0, 0 );
     let cohesion = new Vector3( 0, 0, 0 );
     let separation = new Vector3( 0, 0, 0 );
+    let ground_avoidance = new Vector3( 0, 0, 0 );
 
     boid.position.add(
       boid.userData.velocity
@@ -302,6 +321,10 @@ class Simualtion {
 
     separation = this.separation( boid, fish_type );
     boid.userData.acceleration.add( separation );
+
+    ground_avoidance = this.apply_ground_avoidance( boid );
+    boid.userData.acceleration.add( ground_avoidance );
+
 
     // TODO run from sharks
 
