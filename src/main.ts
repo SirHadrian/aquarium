@@ -277,7 +277,7 @@ class Simualtion {
   }
 
 
-  animateBalls () {
+  animateBoids () {
 
     let aligment = new Vector3( 0, 0, 0 );
     let cohesion = new Vector3( 0, 0, 0 );
@@ -553,7 +553,7 @@ function main () {
   // Animation loop
   const animate = () => {
 
-    simulation.animateBalls();
+    simulation.animateBoids();
 
     renderer.render( scene, camera );
     requestAnimationFrame( animate );
