@@ -329,6 +329,27 @@ class Simualtion {
   }
 
 
+  #calculate_shark_status ( boid: Object3D ) {
+
+    boid.position.add(
+      boid.userData.velocity
+        .add( boid.userData.acceleration )
+        .normalize()
+        .multiplyScalar( Simualtion.configs.shark_speed )
+    );
+    boid.lookAt( boid.position.clone().add( boid.userData.velocity ) );
+
+    // Reset acceleration
+    boid.userData.acceleration.multiplyScalar( 0 );
+
+    // TODO run after fish 
+
+    this.checkEdges( boid );
+  }
+
+
+
+
   animateBoids () {
 
     this.fish_type_1.children.forEach( ( boid ) => {
@@ -340,21 +361,7 @@ class Simualtion {
     } );
 
     this.sharks.children.forEach( ( boid ) => {
-
-      boid.position.add(
-        boid.userData.velocity
-          .add( boid.userData.acceleration )
-          .normalize()
-          .multiplyScalar( Simualtion.configs.shark_speed )
-      );
-      boid.lookAt( boid.position.clone().add( boid.userData.velocity ) );
-
-      // Reset acceleration
-      boid.userData.acceleration.multiplyScalar( 0 );
-
-      // TODO run after fish 
-
-      this.checkEdges( boid );
+      this.#calculate_shark_status( boid );
     } );
 
   }
