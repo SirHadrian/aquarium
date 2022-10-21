@@ -141,7 +141,7 @@ class Simualtion {
   }
 
 
-  create_container (): Mesh {
+  create_container () {
     const container = new Mesh(
       new BoxGeometry( Simualtion.configs.container_size, Simualtion.configs.container_size, Simualtion.configs.container_size ),
       new MeshStandardMaterial( {
@@ -501,7 +501,7 @@ function main () {
 
   const container = simulation.create_container();
   scene.add( container );
-
+  
   //scene.add( simulation.lines );
   //#endregion
 
