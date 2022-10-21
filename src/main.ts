@@ -14,6 +14,9 @@ import {
   DoubleSide,
   TextureLoader,
   Texture,
+  DirectionalLight,
+  SphereGeometry,
+  MeshBasicMaterial,
 } from 'three';
 import * as dat from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -65,13 +68,23 @@ class RendererSetup extends WebGLRenderer {
 }
 
 
-class LightSetup extends AmbientLight {
+class LightSetup extends DirectionalLight {
 
   constructor( scene: Scene, color: ColorRepresentation, intensity: number ) {
 
     super( color, intensity );
 
-    this.position.set( 0, 200, 0 );
+    this.position.set( 0, 50, 100 );
+
+    const light_sphere = new Mesh(
+      new SphereGeometry( 10, 10, 10 ),
+      new MeshBasicMaterial( {
+        color: 0xffffff,
+      } )
+    );
+    light_sphere.position.set( this.position.x, this.position.y, this.position.z );
+    scene.add( light_sphere );
+
     scene.add( this );
   }
 }
