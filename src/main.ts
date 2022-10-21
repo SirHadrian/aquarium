@@ -100,20 +100,20 @@ class Simualtion {
 
   static configs = {
     shark_seek_radius: 40,
-    fish_number: 100,
+    fish_number: 200,
     sharks_number: 2,
     light_intensity: 1,
-    boid_size: 0.5,
+    boid_size: 1,
     fish_speed: 0.5,
     shark_speed: 0.3,
     aligment_force: 0.05,
     cohesion_force: 0.1,
-    separation_force: 1.05,
+    separation_force: 1,
     aligment_radius: 15,
-    cohesion_radius: 5,
-    separation_radius: 5,
+    cohesion_radius: 10,
+    separation_radius: 10,
     container_opacity: 0.1,
-    container_scale: 1,
+    container_scale: 2,
     container_size: 100,
     gui_width: 300,
     ground_offset: 10,
@@ -394,9 +394,6 @@ class Simualtion {
 
     // Reset acceleration
     boid.userData.acceleration.multiplyScalar( 0 );
-
-    const seek_fish = this.#run_after_fish( boid );
-    boid.userData.acceleration.add( seek_fish );
 
     const ground_avoidance = this.apply_ground_avoidance( boid );
     boid.userData.acceleration.add( ground_avoidance );
