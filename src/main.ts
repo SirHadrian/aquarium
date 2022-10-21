@@ -1,7 +1,6 @@
 import {
   Scene,
   BoxGeometry,
-  CubeTextureLoader,
   Mesh,
   WebGLRenderer,
   PerspectiveCamera,
@@ -13,7 +12,6 @@ import {
   Group,
   Object3D,
   DoubleSide,
-  CubeTexture,
   TextureLoader,
   Texture,
 } from 'three';
@@ -288,9 +286,9 @@ class Simualtion {
     let force = new Vector3( 0, 0, 0 );
 
     if ( position.y < ground + 10 ) {
-      force = new Vector3( 0, 10 - position.y, 0 );
+      force = new Vector3( position.x, 10 - position.y, position.z );
     } else if ( position.y > surface - 10 ) {
-      force = new Vector3( 0, 10 - position.y, 0 );
+      force = new Vector3( position.x, 10 - position.y, position.z );
     }
     return force;
   }
@@ -394,9 +392,9 @@ class Simualtion {
           );
 
           fish.position.set(
-            Simualtion.configs.container_size * ( Math.random() - 0.5 ),
-            Simualtion.configs.container_size * ( Math.random() - 0.5 ),
-            Simualtion.configs.container_size * ( Math.random() - 0.5 )
+            Simualtion.configs.container_size / 2 * ( Math.random() - 0.5 ),
+            Simualtion.configs.container_size / 2 * ( Math.random() - 0.5 ),
+            Simualtion.configs.container_size / 2 * ( Math.random() - 0.5 )
           );
 
           fish.userData.velocity = new Vector3().randomDirection();
@@ -427,9 +425,9 @@ class Simualtion {
           );
 
           fish.position.set(
-            Simualtion.configs.container_size * ( Math.random() - 0.5 ),
-            Simualtion.configs.container_size * ( Math.random() - 0.5 ),
-            Simualtion.configs.container_size * ( Math.random() - 0.5 )
+            ( Simualtion.configs.container_size - 10 ) * ( Math.random() - 0.5 ),
+            ( Simualtion.configs.container_size - 10 ) * ( Math.random() - 0.5 ),
+            ( Simualtion.configs.container_size - 10 ) * ( Math.random() - 0.5 )
           );
 
           fish.userData.velocity = new Vector3().randomDirection();
