@@ -284,7 +284,7 @@ class Simualtion {
   }
 
 
-  #calculate_fish_status ( boid: Object3D ) {
+  #calculate_fish_status ( boid: Object3D, fish_type: Group ) {
 
     let aligment = new Vector3( 0, 0, 0 );
     let cohesion = new Vector3( 0, 0, 0 );
@@ -301,13 +301,13 @@ class Simualtion {
     // Reset acceleration
     boid.userData.acceleration.multiplyScalar( 0 );
 
-    aligment = this.aligment( boid, this.fish_type_1 );
+    aligment = this.aligment( boid, fish_type );
     boid.userData.acceleration.add( aligment );
 
-    cohesion = this.cohesion( boid, this.fish_type_1 );
+    cohesion = this.cohesion( boid, fish_type );
     boid.userData.acceleration.add( cohesion );
 
-    separation = this.separation( boid, this.fish_type_1 );
+    separation = this.separation( boid, fish_type );
     boid.userData.acceleration.add( separation );
 
     // TODO run from sharks
@@ -320,11 +320,11 @@ class Simualtion {
   animateBoids () {
 
     this.fish_type_1.children.forEach( ( boid ) => {
-      this.#calculate_fish_status( boid );
+      this.#calculate_fish_status( boid, this.fish_type_1 );
     } );
 
     this.fish_type_2.children.forEach( ( boid ) => {
-      this.#calculate_fish_status( boid );
+      this.#calculate_fish_status( boid, this.fish_type_2 );
     } );
 
     this.sharks.children.forEach( ( boid ) => {
