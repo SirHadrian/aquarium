@@ -99,7 +99,7 @@ class Simualtion {
     aligment_radius: 15,
     cohesion_radius: 5,
     separation_radius: 5,
-    container_opacity: 0,
+    container_opacity: 0.1,
     container_scale: 1,
     container_size: 100,
     gui_width: 300,
@@ -283,24 +283,20 @@ class Simualtion {
     const position = boid.position;
 
     const ground = -( Simualtion.configs.container_size / 2 );
+    const surface = ( Simualtion.configs.container_size / 2 );
 
     let force = new Vector3( 0, 0, 0 );
 
-    if ( position.y < ground + 20 ) {
+    if ( position.y < ground + 10 ) {
       force = new Vector3( 0, 10 - position.y, 0 );
-    } else if ( position.y > ground + 30 ) {
-      force = new Vector3( 0, position.y - 50, 0 );
+    } else if ( position.y > surface - 10 ) {
+      force = new Vector3( 0, 10 - position.y, 0 );
     }
     return force;
   }
 
 
   #calculate_fish_status ( boid: Object3D, fish_type: Group ) {
-
-    let aligment = new Vector3( 0, 0, 0 );
-    let cohesion = new Vector3( 0, 0, 0 );
-    let separation = new Vector3( 0, 0, 0 );
-    let ground_avoidance = new Vector3( 0, 0, 0 );
 
     boid.position.add(
       boid.userData.velocity
@@ -313,16 +309,16 @@ class Simualtion {
     // Reset acceleration
     boid.userData.acceleration.multiplyScalar( 0 );
 
-    aligment = this.aligment( boid, fish_type );
+    const aligment = this.aligment( boid, fish_type );
     boid.userData.acceleration.add( aligment );
 
-    cohesion = this.cohesion( boid, fish_type );
+    const cohesion = this.cohesion( boid, fish_type );
     boid.userData.acceleration.add( cohesion );
 
-    separation = this.separation( boid, fish_type );
+    const separation = this.separation( boid, fish_type );
     boid.userData.acceleration.add( separation );
 
-    ground_avoidance = this.apply_ground_avoidance( boid );
+    const ground_avoidance = this.apply_ground_avoidance( boid );
     boid.userData.acceleration.add( ground_avoidance );
 
 
