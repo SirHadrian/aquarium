@@ -14,6 +14,7 @@ import {
   Object3D,
   DoubleSide,
   CubeTexture,
+  TextureLoader,
 } from 'three';
 import * as dat from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -97,7 +98,7 @@ class Simualtion {
     aligment_radius: 15,
     cohesion_radius: 5,
     separation_radius: 5,
-    container_opacity: 0.1,
+    container_opacity: 0,
     container_scale: 1,
     container_size: 100,
     gui_width: 300,
@@ -513,7 +514,10 @@ function main () {
   // Simualtion
   const simulation = new Simualtion();
 
-  scene.background = simulation.initSkyBox();
+  //scene.background = simulation.initSkyBox();
+  const backgroundLoader = new TextureLoader();
+  const texture = backgroundLoader.load( './assets/background.jpg' );
+  scene.background = texture;
 
   scene.add( simulation.fish_type_1 );
   scene.add( simulation.fish_type_2 );
@@ -546,7 +550,7 @@ function main () {
   gui.add( Simualtion.configs, "separation_radius", 5, 30, 5 );
 
   gui.add( Simualtion.configs, "container_scale", 1, 5, 1 ).onChange( () => container.scale.set( Simualtion.configs.container_scale, Simualtion.configs.container_scale, Simualtion.configs.container_scale ) );
-  gui.add( Simualtion.configs, "container_opacity", 0.1, 1, 0.1 ).onChange( () => container.material.opacity = Simualtion.configs.container_opacity );
+  gui.add( Simualtion.configs, "container_opacity", 0, 1, 0.1 ).onChange( () => container.material.opacity = Simualtion.configs.container_opacity );
 
 
   //#endregion
