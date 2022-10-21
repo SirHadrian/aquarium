@@ -13,7 +13,6 @@ import {
   DoubleSide,
   TextureLoader,
   Texture,
-  DirectionalLight,
   SphereGeometry,
   MeshBasicMaterial,
   AmbientLight,
@@ -116,7 +115,7 @@ class Simualtion {
     container_scale: 1,
     container_size: 100,
     gui_width: 300,
-    ground_offset: 10,
+    ground_offset: 20,
   }
 
 
@@ -494,9 +493,9 @@ class Simualtion {
           );
 
           fish.position.set(
-            Simualtion.configs.container_size * ( Math.random() - 0.5 ),
-            Simualtion.configs.container_size * ( Math.random() - 0.5 ),
-            Simualtion.configs.container_size * ( Math.random() - 0.5 )
+            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 ),
+            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 ),
+            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 )
           );
 
           fish.userData.velocity = new Vector3().randomDirection();
