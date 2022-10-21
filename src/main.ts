@@ -248,34 +248,31 @@ class Simualtion {
 
   checkEdges ( boid: Object3D ) {
 
-    const negEdge = ( -1 * Simualtion.configs.container_size / 2 * Simualtion.configs.container_scale ) - Simualtion.configs.boid_size;
-    const posEdge = ( Simualtion.configs.container_size / 2 * Simualtion.configs.container_scale ) - Simualtion.configs.boid_size;
+    const scale = Simualtion.configs.container_size * Simualtion.configs.container_scale;
 
-    const offset = Simualtion.configs.boid_size;
+    const width = scale / 2;
+    const height = scale / 2;
+    const depth = scale / 2;
 
-
-    if ( boid.position.x < negEdge ) {
-      boid.position.x += offset;
-      boid.userData.velocity.x *= -1;
-    } else if ( boid.position.x > posEdge ) {
-      boid.position.x -= offset;
-      boid.userData.velocity.x *= -1;
+    // x col
+    if ( boid.position.x < -width ) {
+      boid.position.x = width;
+    } else if ( boid.position.x > width ) {
+      boid.position.x = -width;
     }
 
-    if ( boid.position.y < negEdge ) {
-      boid.position.y += offset;
-      boid.userData.velocity.y *= -1;
-    } else if ( boid.position.y > posEdge ) {
-      boid.position.y -= offset;
-      boid.userData.velocity.y *= -1;
+    // y col
+    if ( boid.position.y < -height ) {
+      boid.position.y = height;
+    } else if ( boid.position.y > height ) {
+      boid.position.y = -height;
     }
 
-    if ( boid.position.z < negEdge ) {
-      boid.position.z += offset;
-      boid.userData.velocity.z *= -1;
-    } else if ( boid.position.z > posEdge ) {
-      boid.position.z -= offset;
-      boid.userData.velocity.z *= -1;
+    // z col
+    if ( boid.position.z < -depth ) {
+      boid.position.z = depth;
+    } else if ( boid.position.z > depth ) {
+      boid.position.z = -depth;
     }
   }
 
