@@ -15,6 +15,7 @@ import {
   DoubleSide,
   CubeTexture,
   TextureLoader,
+  Texture,
 } from 'three';
 import * as dat from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -72,7 +73,7 @@ class LightSetup extends AmbientLight {
 
     super( color, intensity );
 
-    this.position.set( 0, 0, 10 );
+    this.position.set( 0, 200, 0 );
     scene.add( this );
   }
 }
@@ -86,7 +87,7 @@ class Simualtion {
   #lines: Group;
 
   static configs = {
-    fish_number: 10,
+    fish_number: 100,
     sharks_number: 2,
     light_intensity: 1,
     boid_size: 0.5,
@@ -134,18 +135,12 @@ class Simualtion {
   }
 
 
-  initSkyBox (): CubeTexture {
-    const skybox = new CubeTextureLoader()
-      .setPath( './assets/red/' )
-      .load( [
-        'bkg3_right1.png',
-        'bkg3_left2.png',
-        'bkg3_top3.png',
-        'bkg3_bottom4.png',
-        'bkg3_front5.png',
-        'bkg3_back6.png',
-      ] );
-    return skybox;
+  initSkyBox (): Texture {
+
+    const backgroundLoader = new TextureLoader();
+    const texture = backgroundLoader.load( './assets/background.jpg' );
+
+    return texture;
   }
 
 
@@ -514,10 +509,7 @@ function main () {
   // Simualtion
   const simulation = new Simualtion();
 
-  //scene.background = simulation.initSkyBox();
-  const backgroundLoader = new TextureLoader();
-  const texture = backgroundLoader.load( './assets/background.jpg' );
-  scene.background = texture;
+  scene.background = simulation.initSkyBox();
 
   scene.add( simulation.fish_type_1 );
   scene.add( simulation.fish_type_2 );
@@ -533,12 +525,12 @@ function main () {
   //#region GUI
   const gui = new dat.GUI( { width: Simualtion.configs.gui_width } );
 
-  gui.add( Simualtion.configs, "fish_number", 10, 500, 10 ).onChange( () => simulation.recreate_boids() );
+  gui.add( Simualtion.configs, "fish_number", 100, 500, 10 ).onChange( () => simulation.recreate_boids() );
   gui.add( Simualtion.configs, "sharks_number", 1, 10, 1 ).onChange( () => simulation.recreate_boids() );
 
   gui.add( Simualtion.configs, "boid_size", 0.1, 2, 0.1 ).onChange( () => simulation.recreate_boids() );
 
-  gui.add( Simualtion.configs, "fish_speed", 0.1, 2, 0.1 );
+  gui.add( Simualtion.configs, "fish_speed", 0.1, 1, 0.1 );
   gui.add( Simualtion.configs, "shark_speed", 0.1, 2, 0.1 );
 
   gui.add( Simualtion.configs, "aligment_force", 0, 0.5, 0.05 );
