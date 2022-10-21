@@ -101,6 +101,7 @@ class Simualtion {
     container_scale: 1,
     container_size: 100,
     gui_width: 300,
+    ground_offset: 10,
   }
 
 
@@ -392,9 +393,9 @@ class Simualtion {
           );
 
           fish.position.set(
-            Simualtion.configs.container_size / 2 * ( Math.random() - 0.5 ),
-            Simualtion.configs.container_size / 2 * ( Math.random() - 0.5 ),
-            Simualtion.configs.container_size / 2 * ( Math.random() - 0.5 )
+            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 ),
+            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 ),
+            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 )
           );
 
           fish.userData.velocity = new Vector3().randomDirection();
@@ -425,9 +426,9 @@ class Simualtion {
           );
 
           fish.position.set(
-            ( Simualtion.configs.container_size - 10 ) * ( Math.random() - 0.5 ),
-            ( Simualtion.configs.container_size - 10 ) * ( Math.random() - 0.5 ),
-            ( Simualtion.configs.container_size - 10 ) * ( Math.random() - 0.5 )
+            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 ),
+            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 ),
+            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 )
           );
 
           fish.userData.velocity = new Vector3().randomDirection();
