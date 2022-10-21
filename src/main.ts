@@ -79,7 +79,8 @@ class LightSetup extends AmbientLight {
 
 class Simualtion {
 
-  #fish: Group;
+  #fish_type_1: Group;
+  #fish_type_2: Group;
   #sharks: Group;
   #lines: Group;
 
@@ -105,7 +106,9 @@ class Simualtion {
 
   constructor() {
 
-    this.#fish = new Group();
+    this.#fish_type_1 = new Group();
+    this.#fish_type_2 = new Group();
+
     this.#lines = new Group();
     this.#sharks = new Group();
 
@@ -113,8 +116,12 @@ class Simualtion {
     this.#create_fish();
   }
 
-  get fish () {
-    return this.#fish;
+  get fish_type_1 () {
+    return this.#fish_type_1;
+  }
+
+  get fish_type_2 () {
+    return this.#fish_type_2;
   }
 
   get sharks () {
@@ -277,40 +284,48 @@ class Simualtion {
   }
 
 
-  animateBoids () {
+  #calculate_fish_status ( boid: Object3D ) {
 
     let aligment = new Vector3( 0, 0, 0 );
     let cohesion = new Vector3( 0, 0, 0 );
     let separation = new Vector3( 0, 0, 0 );
 
-    this.fish.children.forEach( ( boid ) => {
+    boid.position.add(
+      boid.userData.velocity
+        .add( boid.userData.acceleration )
+        .normalize()
+        .multiplyScalar( Simualtion.configs.fish_speed )
+    );
+    boid.lookAt( boid.position.clone().add( boid.userData.velocity ) );
 
-      boid.position.add(
-        boid.userData.velocity
-          .add( boid.userData.acceleration )
-          .normalize()
-          .multiplyScalar( Simualtion.configs.fish_speed )
-      );
-      boid.lookAt( boid.position.clone().add( boid.userData.velocity ) );
+    // Reset acceleration
+    boid.userData.acceleration.multiplyScalar( 0 );
 
-      // Reset acceleration
-      boid.userData.acceleration.multiplyScalar( 0 );
+    aligment = this.aligment( boid, this.fish_type_1 );
+    boid.userData.acceleration.add( aligment );
 
-      aligment = this.aligment( boid, this.#fish );
-      boid.userData.acceleration.add( aligment );
+    cohesion = this.cohesion( boid, this.fish_type_1 );
+    boid.userData.acceleration.add( cohesion );
 
-      cohesion = this.cohesion( boid, this.#fish );
-      boid.userData.acceleration.add( cohesion );
+    separation = this.separation( boid, this.fish_type_1 );
+    boid.userData.acceleration.add( separation );
 
-      separation = this.separation( boid, this.#fish );
-      boid.userData.acceleration.add( separation );
+    // TODO run from sharks
 
-      // TODO run from sharks
+    this.checkEdges( boid );
 
-      this.checkEdges( boid );
+  }
 
+
+  animateBoids () {
+
+    this.fish_type_1.children.forEach( ( boid ) => {
+      this.#calculate_fish_status( boid );
     } );
 
+    this.fish_type_2.children.forEach( ( boid ) => {
+      this.#calculate_fish_status( boid );
+    } );
 
     this.sharks.children.forEach( ( boid ) => {
 
@@ -322,13 +337,10 @@ class Simualtion {
       );
       boid.lookAt( boid.position.clone().add( boid.userData.velocity ) );
 
-
       // Reset acceleration
       boid.userData.acceleration.multiplyScalar( 0 );
 
       // TODO run after fish 
-      
-
 
       this.checkEdges( boid );
     } );
@@ -373,7 +385,7 @@ class Simualtion {
 
           fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
 
-          this.#fish.add( fish );
+          this.fish_type_1.add( fish );
         }
       } )
     } );
@@ -406,7 +418,7 @@ class Simualtion {
 
           fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
 
-          this.#fish.add( fish );
+          this.fish_type_2.add( fish );
         }
       } )
     } );
@@ -457,14 +469,13 @@ class Simualtion {
 
 
   recreate_boids () {
-    if ( this.#fish.children.length == 0 ) return;
 
-    this.#fish.remove( ...this.#fish.children );
+    this.fish_type_1.remove( ...this.fish_type_1.children );
+    this.fish_type_2.remove( ...this.fish_type_2.children );
     this.#create_fish();
 
-    if ( this.#sharks.children.length == 0 ) return;
 
-    this.sharks.remove( ...this.#sharks.children );
+    this.sharks.remove( ...this.sharks.children );
     this.#create_sharks();
 
   }
@@ -504,7 +515,8 @@ function main () {
 
   scene.background = simulation.initSkyBox();
 
-  scene.add( simulation.fish );
+  scene.add( simulation.fish_type_1 );
+  scene.add( simulation.fish_type_2 );
   scene.add( simulation.sharks );
 
   const container = simulation.create_container();
