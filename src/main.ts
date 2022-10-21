@@ -16,6 +16,7 @@ import {
   DirectionalLight,
   SphereGeometry,
   MeshBasicMaterial,
+  AmbientLight,
 } from 'three';
 import * as dat from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -67,7 +68,7 @@ class RendererSetup extends WebGLRenderer {
 }
 
 
-class LightSetup extends DirectionalLight {
+class LightSetup extends AmbientLight {
 
   constructor( scene: Scene, color: ColorRepresentation, intensity: number ) {
 
