@@ -279,6 +279,10 @@ class Simualtion {
 
   animateBalls () {
 
+    let aligment = new Vector3( 0, 0, 0 );
+    let cohesion = new Vector3( 0, 0, 0 );
+    let separation = new Vector3( 0, 0, 0 );
+
     this.fish.children.forEach( ( boid ) => {
 
       boid.position.add(
@@ -292,13 +296,13 @@ class Simualtion {
       // Reset acceleration
       boid.userData.acceleration.multiplyScalar( 0 );
 
-      const aligment = this.aligment( boid, this.#fish );
+      aligment = this.aligment( boid, this.#fish );
       boid.userData.acceleration.add( aligment );
 
-      const cohesion = this.cohesion( boid, this.#fish );
+      cohesion = this.cohesion( boid, this.#fish );
       boid.userData.acceleration.add( cohesion );
 
-      const separation = this.separation( boid, this.#fish );
+      separation = this.separation( boid, this.#fish );
       boid.userData.acceleration.add( separation );
 
       // TODO run from sharks
@@ -319,7 +323,11 @@ class Simualtion {
       boid.lookAt( boid.position.clone().add( boid.userData.velocity ) );
 
 
+      // Reset acceleration
+      boid.userData.acceleration.multiplyScalar( 0 );
+
       // TODO run after fish 
+      
 
 
       this.checkEdges( boid );
@@ -501,7 +509,7 @@ function main () {
 
   const container = simulation.create_container();
   scene.add( container );
-  
+
   //scene.add( simulation.lines );
   //#endregion
 
