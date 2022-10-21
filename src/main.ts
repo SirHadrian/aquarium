@@ -421,6 +421,9 @@ class Simualtion {
 
           fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
 
+          fish.castShadow = true;
+          fish.receiveShadow = true;
+
           this.fish_type_1.add( fish );
         }
       } )
@@ -453,6 +456,9 @@ class Simualtion {
           fish.userData.acceleration = new Vector3( 0, 0, 0 );
 
           fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
+
+          fish.castShadow = true;
+          fish.receiveShadow = true;
 
           this.fish_type_2.add( fish );
         }
@@ -496,6 +502,9 @@ class Simualtion {
           fish.userData.acceleration = new Vector3( 0, 0, 0 );
 
           fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
+
+          fish.castShadow = true;
+          fish.receiveShadow = true;
 
           this.#sharks.add( fish );
         }
