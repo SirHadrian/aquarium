@@ -280,16 +280,17 @@ class Simualtion {
   apply_ground_avoidance ( boid: Object3D ): Vector3 {
 
     const position = boid.position;
+    const ground_offset = Simualtion.configs.ground_offset;
 
     const ground = -( Simualtion.configs.container_size / 2 );
     const surface = ( Simualtion.configs.container_size / 2 );
 
     let force = new Vector3( 0, 0, 0 );
 
-    if ( position.y < ground + 10 ) {
-      force = new Vector3( position.x, 10 - position.y, position.z );
-    } else if ( position.y > surface - 10 ) {
-      force = new Vector3( position.x, 10 - position.y, position.z );
+    if ( position.y < ground + ground_offset ) {
+      force = new Vector3( position.x, -1 * position.y, position.z );
+    } else if ( position.y > surface - ground_offset ) {
+      force = new Vector3( position.x, -1 * position.y, position.z );
     }
     return force;
   }
@@ -340,6 +341,9 @@ class Simualtion {
 
     // Reset acceleration
     boid.userData.acceleration.multiplyScalar( 0 );
+
+    const ground_avoidance = this.apply_ground_avoidance( boid );
+    boid.userData.acceleration.add( ground_avoidance );
 
     // TODO run after fish 
 
