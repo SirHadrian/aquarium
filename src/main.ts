@@ -13,6 +13,7 @@ import {
   Group,
   Object3D,
   DoubleSide,
+  CubeTexture,
 } from 'three';
 import * as dat from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -125,7 +126,7 @@ class Simualtion {
   }
 
 
-  initSkyBox () {
+  initSkyBox (): CubeTexture {
     const skybox = new CubeTextureLoader()
       .setPath( './assets/red/' )
       .load( [
@@ -140,7 +141,7 @@ class Simualtion {
   }
 
 
-  create_container () {
+  create_container (): Mesh {
     const container = new Mesh(
       new BoxGeometry( Simualtion.configs.container_size, Simualtion.configs.container_size, Simualtion.configs.container_size ),
       new MeshStandardMaterial( {
