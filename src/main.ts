@@ -5,7 +5,6 @@ import {
   WebGLRenderer,
   PerspectiveCamera,
   sRGBEncoding,
-  AmbientLight,
   ColorRepresentation,
   MeshStandardMaterial,
   Vector3,
@@ -76,6 +75,7 @@ class LightSetup extends DirectionalLight {
 
     this.position.set( 0, 50, 100 );
 
+    // DEBUG light
     const light_sphere = new Mesh(
       new SphereGeometry( 10, 10, 10 ),
       new MeshBasicMaterial( {
@@ -84,6 +84,7 @@ class LightSetup extends DirectionalLight {
     );
     light_sphere.position.set( this.position.x, this.position.y, this.position.z );
     scene.add( light_sphere );
+    // ===========
 
     scene.add( this );
   }
