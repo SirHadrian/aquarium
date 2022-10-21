@@ -99,6 +99,7 @@ class Simualtion {
   #lines: Group;
 
   static configs = {
+    shark_seek_radius: 40,
     fish_number: 100,
     sharks_number: 2,
     light_intensity: 1,
@@ -115,7 +116,7 @@ class Simualtion {
     container_scale: 1,
     container_size: 100,
     gui_width: 300,
-    ground_offset: 20,
+    ground_offset: 10,
   }
 
 
@@ -296,8 +297,8 @@ class Simualtion {
     const position = boid.position;
     const ground_offset = Simualtion.configs.ground_offset;
 
-    const ground = -( Simualtion.configs.container_size / 2 );
-    const surface = ( Simualtion.configs.container_size / 2 );
+    const ground = -( ( Simualtion.configs.container_size * Simualtion.configs.container_scale ) / 2 );
+    const surface = ( ( Simualtion.configs.container_size * Simualtion.configs.container_scale ) / 2 );
 
     let force = new Vector3( 0, 0, 0 );
 
@@ -343,6 +344,44 @@ class Simualtion {
   }
 
 
+  #run_after_fish ( boid: Object3D ) {
+
+    let steering = new Vector3( 0, 0, 0 );
+
+    if ( this.fish_type_1.children.length <= 1 ) return steering;
+
+    if ( this.fish_type_2.children.length <= 1 ) return steering;
+
+    let total = 0;
+
+    this.fish_type_1.children.forEach( ( other ) => {
+
+      let distance = boid.position.distanceTo( other.position );
+
+      if ( distance < Simualtion.configs.shark_seek_radius ) {
+        steering.add( other.position );
+        total++;
+      }
+    } );
+
+    this.fish_type_2.children.forEach( ( other ) => {
+
+      let distance = boid.position.distanceTo( other.position );
+
+      if ( distance < Simualtion.configs.shark_seek_radius ) {
+        steering.add( other.position );
+        total++;
+      }
+    } );
+
+    steering.divideScalar( total );
+    steering.sub( boid.position );
+    steering.multiplyScalar( Simualtion.configs.cohesion_force );
+
+    return steering;
+  }
+
+
   #calculate_shark_status ( boid: Object3D ) {
 
     boid.position.add(
@@ -355,6 +394,9 @@ class Simualtion {
 
     // Reset acceleration
     boid.userData.acceleration.multiplyScalar( 0 );
+
+    const seek_fish = this.#run_after_fish( boid );
+    boid.userData.acceleration.add( seek_fish );
 
     const ground_avoidance = this.apply_ground_avoidance( boid );
     boid.userData.acceleration.add( ground_avoidance );
@@ -418,6 +460,7 @@ class Simualtion {
 
           fish.userData.velocity = new Vector3().randomDirection();
           fish.userData.acceleration = new Vector3( 0, 0, 0 );
+          fish.userData.isFish = true;
 
           fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
 
@@ -454,6 +497,7 @@ class Simualtion {
 
           fish.userData.velocity = new Vector3().randomDirection();
           fish.userData.acceleration = new Vector3( 0, 0, 0 );
+          fish.userData.isFish = true;
 
           fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
 
@@ -500,6 +544,7 @@ class Simualtion {
 
           fish.userData.velocity = new Vector3().randomDirection();
           fish.userData.acceleration = new Vector3( 0, 0, 0 );
+          fish.userData.isShark = true;
 
           fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
 
