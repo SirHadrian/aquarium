@@ -100,8 +100,8 @@ class Simualtion {
 
   static configs = {
     shark_seek_radius: 50,
-    fish_number: 10,
-    sharks_number: 1,
+    fish_number: 200,
+    sharks_number: 2,
     light_intensity: 1,
     boid_size: 1,
     fish_speed: 0.5,
@@ -113,7 +113,7 @@ class Simualtion {
     cohesion_radius: 5,
     separation_radius: 5,
     container_opacity: 0.1,
-    container_scale: 1,
+    container_scale: 2,
     container_size: 100,
     gui_width: 300,
     ground_offset: 10,
@@ -376,7 +376,7 @@ class Simualtion {
     boid.userData.acceleration.multiplyScalar( 0 );
 
     const ground_avoidance = this.apply_ground_avoidance( boid );
-    boid.userData.acceleration.add( ground_avoidance );
+    boid.userData.acceleration.add( ground_avoidance.setY( ground_avoidance.y * 0.2 ) );
 
 
     // TODO run after fish 
