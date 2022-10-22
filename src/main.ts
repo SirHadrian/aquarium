@@ -378,10 +378,8 @@ class Simualtion {
     const ground_avoidance = this.apply_ground_avoidance( boid );
     boid.userData.acceleration.add( ground_avoidance.setY( ground_avoidance.y * 0.2 ) );
 
-
-    // TODO run after fish 
-
     this.checkEdges( boid );
+
   }
 
 
@@ -535,7 +533,7 @@ class Simualtion {
     } );
   }
 
-
+// Debug only
   recreate_boids () {
 
     this.fish_type_1.remove( ...this.fish_type_1.children );
@@ -590,7 +588,6 @@ function main () {
   const container = simulation.create_container();
   scene.add( container );
 
-  //scene.add( simulation.lines );
   //#endregion
 
 
