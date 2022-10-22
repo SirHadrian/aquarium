@@ -337,6 +337,7 @@ class Simualtion {
     );
     boid.lookAt( boid.position.clone().add( boid.userData.velocity ) );
 
+
     // Reset acceleration
     boid.userData.acceleration.multiplyScalar( 0 );
 
@@ -356,9 +357,6 @@ class Simualtion {
     boid.userData.acceleration.add( avoid_force );
 
 
-
-    // TODO run from sharks
-
     this.checkEdges( boid );
 
   }
@@ -376,6 +374,9 @@ class Simualtion {
 
     // Reset acceleration
     boid.userData.acceleration.multiplyScalar( 0 );
+
+    const ground_avoidance = this.apply_ground_avoidance( boid );
+    boid.userData.acceleration.add( ground_avoidance );
 
 
     // TODO run after fish 
