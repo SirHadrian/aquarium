@@ -99,21 +99,21 @@ class Simualtion {
   #lines: Group;
 
   static configs = {
-    shark_seek_radius: 40,
-    fish_number: 200,
-    sharks_number: 2,
+    shark_seek_radius: 50,
+    fish_number: 10,
+    sharks_number: 1,
     light_intensity: 1,
     boid_size: 1,
     fish_speed: 0.5,
     shark_speed: 0.3,
     aligment_force: 0.05,
     cohesion_force: 0.1,
-    separation_force: 1,
+    separation_force: 1.05,
     aligment_radius: 15,
-    cohesion_radius: 10,
-    separation_radius: 10,
+    cohesion_radius: 5,
+    separation_radius: 5,
     container_opacity: 0.1,
-    container_scale: 2,
+    container_scale: 1,
     container_size: 100,
     gui_width: 300,
     ground_offset: 10,
@@ -310,6 +310,22 @@ class Simualtion {
     return force;
   }
 
+  #shark_avoidance ( boid: Object3D, sharks: Group ) {
+
+    let avoid_force = new Vector3( 0, 0, 0 );
+
+    sharks.children.forEach( ( shark ) => {
+
+      let distance = boid.position.distanceTo( shark.position );
+
+      if ( distance < Simualtion.configs.shark_seek_radius ) {
+        avoid_force = boid.position.clone().sub( shark.position ).normalize();
+      }
+    } );
+
+    return avoid_force;
+  }
+
 
   #calculate_fish_status ( boid: Object3D, fish_type: Group ) {
 
@@ -336,16 +352,14 @@ class Simualtion {
     const ground_avoidance = this.apply_ground_avoidance( boid );
     boid.userData.acceleration.add( ground_avoidance );
 
+    const avoid_force = this.#shark_avoidance( boid, this.sharks );
+    boid.userData.acceleration.add( avoid_force );
+
+
 
     // TODO run from sharks
 
     this.checkEdges( boid );
-
-  }
-
-
-  #seek_fish ( boid: Object3D ) {
-
 
   }
 
@@ -363,11 +377,6 @@ class Simualtion {
     // Reset acceleration
     boid.userData.acceleration.multiplyScalar( 0 );
 
-    // const seek_fish = this.#seek_fish( boid );
-    // boid.userData.acceleration.add( seek_fish );
-
-    const ground_avoidance = this.apply_ground_avoidance( boid );
-    boid.userData.acceleration.add( ground_avoidance );
 
     // TODO run after fish 
 
