@@ -37,56 +37,58 @@ class SceneSetup extends Scene {
 
 class CameraSetup extends PerspectiveCamera {
 
-  constructor( fov: number, aspectRatio: number, nearDistance: number, farDistance: number ) {
+  constructor(fov: number, aspectRatio: number, nearDistance: number, farDistance: number) {
 
-    super( fov, aspectRatio, nearDistance, farDistance );
+    super(fov, aspectRatio, nearDistance, farDistance);
 
-    this.position.set( 0, 0, 200 );
-    this.lookAt( 0, 0, 0 );
+    this.position.set(0, 0, 200);
+    this.lookAt(0, 0, 0);
   }
 }
 
 
 class RendererSetup extends WebGLRenderer {
 
-  constructor( configs: object, camera: CameraSetup ) {
+  constructor(configs: object, camera: CameraSetup) {
 
-    super( configs );
+    super(configs);
 
-    this.setSize( window.innerWidth, window.innerHeight );
-    this.setPixelRatio( window.devicePixelRatio );
+    this.setSize(window.innerWidth, window.innerHeight);
+    this.setPixelRatio(window.devicePixelRatio);
     this.outputEncoding = sRGBEncoding;
 
     // Inject renderer to DOM
-    const target = document.getElementById( "app" );
-    target?.appendChild( this.domElement );
+    const target = document.getElementById("app");
+    target?.appendChild(this.domElement);
 
     // OrbitControls
-    new OrbitControls( camera, this.domElement );
+    new OrbitControls(camera, this.domElement);
   }
 }
 
 
 class LightSetup extends AmbientLight {
 
-  constructor( scene: Scene, color: ColorRepresentation, intensity: number ) {
+  constructor(scene: Scene, color: ColorRepresentation, intensity: number) {
 
-    super( color, intensity );
+    super(color, intensity);
 
-    this.position.set( 0, 50, 100 );
+    this.position.set(0, 50, 100);
 
     // DEBUG light
-    const light_sphere = new Mesh(
-      new SphereGeometry( 10, 10, 10 ),
-      new MeshBasicMaterial( {
-        color: 0xffffff,
-      } )
-    );
-    light_sphere.position.set( this.position.x, this.position.y, this.position.z );
-    scene.add( light_sphere );
+    // See where the light source is located
+
+    // const light_sphere = new Mesh(
+    //   new SphereGeometry(10, 10, 10),
+    //   new MeshBasicMaterial({
+    //     color: 0xffffff,
+    //   })
+    // );
+    // light_sphere.position.set( this.position.x, this.position.y, this.position.z );
+    // scene.add( light_sphere );
     // ===========
 
-    scene.add( this );
+    scene.add(this);
   }
 }
 
@@ -132,135 +134,135 @@ class Simualtion {
     this.#create_fish();
   }
 
-  get fish_type_1 () {
+  get fish_type_1() {
     return this.#fish_type_1;
   }
 
-  get fish_type_2 () {
+  get fish_type_2() {
     return this.#fish_type_2;
   }
 
-  get sharks () {
+  get sharks() {
     return this.#sharks;
   }
 
-  get lines () {
+  get lines() {
     return this.#lines;
   }
 
 
-  initSkyBox (): Texture {
+  initSkyBox(): Texture {
 
     const backgroundLoader = new TextureLoader();
-    const texture = backgroundLoader.load( './assets/background.jpg' );
+    const texture = backgroundLoader.load('./assets/background.jpg');
 
     return texture;
   }
 
 
-  create_container () {
+  create_container() {
     const container = new Mesh(
-      new BoxGeometry( Simualtion.configs.container_size, Simualtion.configs.container_size, Simualtion.configs.container_size ),
-      new MeshStandardMaterial( {
+      new BoxGeometry(Simualtion.configs.container_size, Simualtion.configs.container_size, Simualtion.configs.container_size),
+      new MeshStandardMaterial({
         transparent: true,
         opacity: Simualtion.configs.container_opacity,
         color: 0xffffff
-      } )
+      })
     );
-    container.position.set( 0, 0, 0 );
-    container.scale.set( Simualtion.configs.container_scale, Simualtion.configs.container_scale, Simualtion.configs.container_scale );
+    container.position.set(0, 0, 0);
+    container.scale.set(Simualtion.configs.container_scale, Simualtion.configs.container_scale, Simualtion.configs.container_scale);
 
     return container;
   }
 
 
-  separation ( boid: Object3D, boids: Group ): Vector3 {
+  separation(boid: Object3D, boids: Group): Vector3 {
 
 
-    let steering = new Vector3( 0, 0, 0 );
+    let steering = new Vector3(0, 0, 0);
 
-    if ( boids.children.length <= 1 ) return steering;
+    if (boids.children.length <= 1) return steering;
 
     let total = 0;
 
-    boids.children.forEach( ( other ) => {
+    boids.children.forEach((other) => {
 
-      let distance = boid.position.distanceTo( other.position );
+      let distance = boid.position.distanceTo(other.position);
 
-      if ( distance < Simualtion.configs.separation_radius ) {
+      if (distance < Simualtion.configs.separation_radius) {
 
-        let diff = new Vector3().subVectors( boid.position, other.position );
-        diff.divideScalar( Simualtion.configs.separation_radius );
+        let diff = new Vector3().subVectors(boid.position, other.position);
+        diff.divideScalar(Simualtion.configs.separation_radius);
 
-        steering.add( diff );
+        steering.add(diff);
         total++;
       }
-    } );
+    });
 
-    steering.divideScalar( total );
+    steering.divideScalar(total);
 
-    steering.multiplyScalar( Simualtion.configs.separation_force );
+    steering.multiplyScalar(Simualtion.configs.separation_force);
 
     return steering;
   }
 
 
-  cohesion ( boid: Object3D, boids: Group ): Vector3 {
+  cohesion(boid: Object3D, boids: Group): Vector3 {
 
 
-    let steering = new Vector3( 0, 0, 0 );
+    let steering = new Vector3(0, 0, 0);
 
-    if ( boids.children.length <= 1 ) return steering;
+    if (boids.children.length <= 1) return steering;
 
     let total = 0;
 
-    boids.children.forEach( ( other ) => {
+    boids.children.forEach((other) => {
 
-      let distance = boid.position.distanceTo( other.position );
+      let distance = boid.position.distanceTo(other.position);
 
-      if ( distance < Simualtion.configs.cohesion_radius ) {
-        steering.add( other.position );
+      if (distance < Simualtion.configs.cohesion_radius) {
+        steering.add(other.position);
         total++;
       }
-    } );
+    });
 
-    steering.divideScalar( total );
-    steering.sub( boid.position );
-    steering.multiplyScalar( Simualtion.configs.cohesion_force );
+    steering.divideScalar(total);
+    steering.sub(boid.position);
+    steering.multiplyScalar(Simualtion.configs.cohesion_force);
 
     return steering;
   }
 
 
-  aligment ( boid: Object3D, boids: Group ): Vector3 {
+  aligment(boid: Object3D, boids: Group): Vector3 {
 
 
-    let steering = new Vector3( 0, 0, 0 );
+    let steering = new Vector3(0, 0, 0);
 
-    if ( boids.children.length <= 1 ) return steering;
+    if (boids.children.length <= 1) return steering;
 
     let total = 0;
 
-    boids.children.forEach( ( other ) => {
+    boids.children.forEach((other) => {
 
-      let distance = boid.position.distanceTo( other.position );
+      let distance = boid.position.distanceTo(other.position);
 
-      if ( distance < Simualtion.configs.aligment_radius ) {
-        steering.add( other.userData.velocity );
+      if (distance < Simualtion.configs.aligment_radius) {
+        steering.add(other.userData.velocity);
         total++;
       }
-    } );
+    });
 
-    steering.divideScalar( total );
+    steering.divideScalar(total);
     steering.normalize();
-    steering.sub( boid.userData.velocity );
-    steering.multiplyScalar( Simualtion.configs.aligment_force );
+    steering.sub(boid.userData.velocity);
+    steering.multiplyScalar(Simualtion.configs.aligment_force);
 
     return steering;
   }
 
 
-  checkEdges ( boid: Object3D ) {
+  checkEdges(boid: Object3D) {
 
     const scale = Simualtion.configs.container_size * Simualtion.configs.container_scale;
 
@@ -269,157 +271,157 @@ class Simualtion {
     const depth = scale / 2;
 
     // x col
-    if ( boid.position.x < -width ) {
+    if (boid.position.x < -width) {
       boid.position.x = width;
-    } else if ( boid.position.x > width ) {
+    } else if (boid.position.x > width) {
       boid.position.x = -width;
     }
 
     // y col
-    if ( boid.position.y < -height ) {
+    if (boid.position.y < -height) {
       boid.position.y = height;
-    } else if ( boid.position.y > height ) {
+    } else if (boid.position.y > height) {
       boid.position.y = -height;
     }
 
     // z col
-    if ( boid.position.z < -depth ) {
+    if (boid.position.z < -depth) {
       boid.position.z = depth;
-    } else if ( boid.position.z > depth ) {
+    } else if (boid.position.z > depth) {
       boid.position.z = -depth;
     }
 
   }
 
 
-  apply_ground_avoidance ( boid: Object3D ): Vector3 {
+  apply_ground_avoidance(boid: Object3D): Vector3 {
 
     const position = boid.position;
     const ground_offset = Simualtion.configs.ground_offset;
 
-    const ground = -( ( Simualtion.configs.container_size * Simualtion.configs.container_scale ) / 2 );
-    const surface = ( ( Simualtion.configs.container_size * Simualtion.configs.container_scale ) / 2 );
+    const ground = -((Simualtion.configs.container_size * Simualtion.configs.container_scale) / 2);
+    const surface = ((Simualtion.configs.container_size * Simualtion.configs.container_scale) / 2);
 
-    let force = new Vector3( 0, 0, 0 );
+    let force = new Vector3(0, 0, 0);
 
-    if ( position.y < ground + ground_offset ) {
-      force = new Vector3( position.x, -1 * position.y, position.z );
-    } else if ( position.y > surface - ground_offset ) {
-      force = new Vector3( position.x, -1 * position.y, position.z );
+    if (position.y < ground + ground_offset) {
+      force = new Vector3(position.x, -1 * position.y, position.z);
+    } else if (position.y > surface - ground_offset) {
+      force = new Vector3(position.x, -1 * position.y, position.z);
     }
     return force;
   }
 
-  #shark_avoidance ( boid: Object3D, sharks: Group ) {
+  #shark_avoidance(boid: Object3D, sharks: Group) {
 
-    let avoid_force = new Vector3( 0, 0, 0 );
+    let avoid_force = new Vector3(0, 0, 0);
 
-    sharks.children.forEach( ( shark ) => {
+    sharks.children.forEach((shark) => {
 
-      let distance = boid.position.distanceTo( shark.position );
+      let distance = boid.position.distanceTo(shark.position);
 
-      if ( distance < Simualtion.configs.shark_seek_radius ) {
-        avoid_force = boid.position.clone().sub( shark.position ).normalize();
+      if (distance < Simualtion.configs.shark_seek_radius) {
+        avoid_force = boid.position.clone().sub(shark.position).normalize();
       }
-    } );
+    });
 
     return avoid_force;
   }
 
 
-  #calculate_fish_status ( boid: Object3D, fish_type: Group ) {
+  #calculate_fish_status(boid: Object3D, fish_type: Group) {
 
     boid.position.add(
       boid.userData.velocity
-        .add( boid.userData.acceleration )
+        .add(boid.userData.acceleration)
         .normalize()
-        .multiplyScalar( Simualtion.configs.fish_speed )
+        .multiplyScalar(Simualtion.configs.fish_speed)
     );
-    boid.lookAt( boid.position.clone().add( boid.userData.velocity ) );
+    boid.lookAt(boid.position.clone().add(boid.userData.velocity));
 
 
     // Reset acceleration
-    boid.userData.acceleration.multiplyScalar( 0 );
+    boid.userData.acceleration.multiplyScalar(0);
 
-    const aligment = this.aligment( boid, fish_type );
-    boid.userData.acceleration.add( aligment );
+    const aligment = this.aligment(boid, fish_type);
+    boid.userData.acceleration.add(aligment);
 
-    const cohesion = this.cohesion( boid, fish_type );
-    boid.userData.acceleration.add( cohesion );
+    const cohesion = this.cohesion(boid, fish_type);
+    boid.userData.acceleration.add(cohesion);
 
-    const separation = this.separation( boid, fish_type );
-    boid.userData.acceleration.add( separation );
+    const separation = this.separation(boid, fish_type);
+    boid.userData.acceleration.add(separation);
 
-    const ground_avoidance = this.apply_ground_avoidance( boid );
-    boid.userData.acceleration.add( ground_avoidance );
+    const ground_avoidance = this.apply_ground_avoidance(boid);
+    boid.userData.acceleration.add(ground_avoidance);
 
-    const avoid_force = this.#shark_avoidance( boid, this.sharks );
-    boid.userData.acceleration.add( avoid_force );
+    const avoid_force = this.#shark_avoidance(boid, this.sharks);
+    boid.userData.acceleration.add(avoid_force);
 
 
-    this.checkEdges( boid );
+    this.checkEdges(boid);
 
   }
 
 
-  #calculate_shark_status ( boid: Object3D ) {
+  #calculate_shark_status(boid: Object3D) {
 
     boid.position.add(
       boid.userData.velocity
-        .add( boid.userData.acceleration )
+        .add(boid.userData.acceleration)
         .normalize()
-        .multiplyScalar( Simualtion.configs.shark_speed )
+        .multiplyScalar(Simualtion.configs.shark_speed)
     );
-    boid.lookAt( boid.position.clone().add( boid.userData.velocity ) );
+    boid.lookAt(boid.position.clone().add(boid.userData.velocity));
 
     // Reset acceleration
-    boid.userData.acceleration.multiplyScalar( 0 );
+    boid.userData.acceleration.multiplyScalar(0);
 
-    const ground_avoidance = this.apply_ground_avoidance( boid );
-    boid.userData.acceleration.add( ground_avoidance.setY( ground_avoidance.y * 0.2 ) );
+    const ground_avoidance = this.apply_ground_avoidance(boid);
+    boid.userData.acceleration.add(ground_avoidance.setY(ground_avoidance.y * 0.2));
 
-    this.checkEdges( boid );
-
-  }
-
-
-
-
-  animate_boids () {
-
-    this.fish_type_1.children.forEach( ( boid ) => {
-      this.#calculate_fish_status( boid, this.fish_type_1 );
-    } );
-
-    this.fish_type_2.children.forEach( ( boid ) => {
-      this.#calculate_fish_status( boid, this.fish_type_2 );
-    } );
-
-    this.sharks.children.forEach( ( boid ) => {
-      this.#calculate_shark_status( boid );
-    } );
+    this.checkEdges(boid);
 
   }
 
 
-  #create_fish () {
+
+
+  animate_boids() {
+
+    this.fish_type_1.children.forEach((boid) => {
+      this.#calculate_fish_status(boid, this.fish_type_1);
+    });
+
+    this.fish_type_2.children.forEach((boid) => {
+      this.#calculate_fish_status(boid, this.fish_type_2);
+    });
+
+    this.sharks.children.forEach((boid) => {
+      this.#calculate_shark_status(boid);
+    });
+
+  }
+
+
+  #create_fish() {
 
     const loader = new MTLLoader();
 
-    loader.setMaterialOptions( {
+    loader.setMaterialOptions({
       side: DoubleSide
-    } );
+    });
 
-    loader.load( './assets/objects/fish_1/fish.mtl', ( material ) => {
+    loader.load('./assets/objects/fish_1/fish.mtl', (material) => {
 
       material.preload();
 
       const objLoader = new OBJLoader();
 
-      objLoader.setMaterials( material );
-      objLoader.load( './assets/objects/fish_1/fish.obj', ( object ) => {
+      objLoader.setMaterials(material);
+      objLoader.load('./assets/objects/fish_1/fish.obj', (object) => {
 
-        for ( let i = 0; i < Simualtion.configs.fish_number / 2; ++i ) {
+        for (let i = 0; i < Simualtion.configs.fish_number / 2; ++i) {
           const fish = object.clone();
 
           fish.scale.set(
@@ -429,34 +431,34 @@ class Simualtion {
           );
 
           fish.position.set(
-            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 ),
-            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 ),
-            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 )
+            (Simualtion.configs.container_size - Simualtion.configs.ground_offset) * (Math.random() - 0.5),
+            (Simualtion.configs.container_size - Simualtion.configs.ground_offset) * (Math.random() - 0.5),
+            (Simualtion.configs.container_size - Simualtion.configs.ground_offset) * (Math.random() - 0.5)
           );
 
           fish.userData.velocity = new Vector3().randomDirection();
-          fish.userData.acceleration = new Vector3( 0, 0, 0 );
+          fish.userData.acceleration = new Vector3(0, 0, 0);
           fish.userData.isFish = true;
 
-          fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
+          fish.lookAt(fish.position.clone().add(fish.userData.velocity));
 
           fish.castShadow = true;
           fish.receiveShadow = true;
 
-          this.fish_type_1.add( fish );
+          this.fish_type_1.add(fish);
         }
-      } )
-    } );
+      })
+    });
 
-    loader.load( './assets/objects/fish_2/fish.mtl', ( material ) => {
+    loader.load('./assets/objects/fish_2/fish.mtl', (material) => {
       material.preload();
 
       const objLoader = new OBJLoader();
 
-      objLoader.setMaterials( material );
-      objLoader.load( './assets/objects/fish_2/fish.obj', ( object ) => {
+      objLoader.setMaterials(material);
+      objLoader.load('./assets/objects/fish_2/fish.obj', (object) => {
 
-        for ( let i = 0; i < Simualtion.configs.fish_number / 2; ++i ) {
+        for (let i = 0; i < Simualtion.configs.fish_number / 2; ++i) {
           const fish = object.clone();
 
           fish.scale.set(
@@ -466,44 +468,44 @@ class Simualtion {
           );
 
           fish.position.set(
-            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 ),
-            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 ),
-            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 )
+            (Simualtion.configs.container_size - Simualtion.configs.ground_offset) * (Math.random() - 0.5),
+            (Simualtion.configs.container_size - Simualtion.configs.ground_offset) * (Math.random() - 0.5),
+            (Simualtion.configs.container_size - Simualtion.configs.ground_offset) * (Math.random() - 0.5)
           );
 
           fish.userData.velocity = new Vector3().randomDirection();
-          fish.userData.acceleration = new Vector3( 0, 0, 0 );
+          fish.userData.acceleration = new Vector3(0, 0, 0);
           fish.userData.isFish = true;
 
-          fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
+          fish.lookAt(fish.position.clone().add(fish.userData.velocity));
 
           fish.castShadow = true;
           fish.receiveShadow = true;
 
-          this.fish_type_2.add( fish );
+          this.fish_type_2.add(fish);
         }
-      } )
-    } );
+      })
+    });
   }
 
 
-  #create_sharks () {
+  #create_sharks() {
 
     const loader = new MTLLoader();
 
-    loader.setMaterialOptions( {
+    loader.setMaterialOptions({
       side: DoubleSide
-    } );
+    });
 
-    loader.load( './assets/objects/fish_3/Shark.mtl', ( material ) => {
+    loader.load('./assets/objects/fish_3/Shark.mtl', (material) => {
       material.preload();
 
       const objLoader = new OBJLoader();
 
-      objLoader.setMaterials( material );
-      objLoader.load( './assets/objects/fish_3/Shark.obj', ( object ) => {
+      objLoader.setMaterials(material);
+      objLoader.load('./assets/objects/fish_3/Shark.obj', (object) => {
 
-        for ( let i = 0; i < Simualtion.configs.sharks_number; ++i ) {
+        for (let i = 0; i < Simualtion.configs.sharks_number; ++i) {
           const fish = object.clone();
 
           fish.scale.set(
@@ -513,41 +515,41 @@ class Simualtion {
           );
 
           fish.position.set(
-            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 ),
-            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 ),
-            ( Simualtion.configs.container_size - Simualtion.configs.ground_offset ) * ( Math.random() - 0.5 )
+            (Simualtion.configs.container_size - Simualtion.configs.ground_offset) * (Math.random() - 0.5),
+            (Simualtion.configs.container_size - Simualtion.configs.ground_offset) * (Math.random() - 0.5),
+            (Simualtion.configs.container_size - Simualtion.configs.ground_offset) * (Math.random() - 0.5)
           );
 
           fish.userData.velocity = new Vector3().randomDirection();
-          fish.userData.acceleration = new Vector3( 0, 0, 0 );
+          fish.userData.acceleration = new Vector3(0, 0, 0);
           fish.userData.isShark = true;
 
-          fish.lookAt( fish.position.clone().add( fish.userData.velocity ) );
+          fish.lookAt(fish.position.clone().add(fish.userData.velocity));
 
           fish.castShadow = true;
           fish.receiveShadow = true;
 
-          this.#sharks.add( fish );
+          this.#sharks.add(fish);
         }
-      } )
-    } );
+      })
+    });
   }
 
-// Debug only
-  recreate_boids () {
+  // Debug only
+  recreate_boids() {
 
-    this.fish_type_1.remove( ...this.fish_type_1.children );
-    this.fish_type_2.remove( ...this.fish_type_2.children );
+    this.fish_type_1.remove(...this.fish_type_1.children);
+    this.fish_type_2.remove(...this.fish_type_2.children);
     this.#create_fish();
 
 
-    this.sharks.remove( ...this.sharks.children );
+    this.sharks.remove(...this.sharks.children);
     this.#create_sharks();
 
   }
 }
 
-function main () {
+function main() {
 
   //#region INIT
   // Create Scene
@@ -562,7 +564,7 @@ function main () {
   );
 
   // Create Renderer
-  const renderer = new RendererSetup( { antialiasing: true }, camera );
+  const renderer = new RendererSetup({ antialiasing: true }, camera);
 
   // Create light source
   const light = new LightSetup(
@@ -570,7 +572,7 @@ function main () {
     0xffffff,
     1
   );
-  scene.add( light );
+  scene.add(light);
   //#endregion
 
 
@@ -581,37 +583,37 @@ function main () {
 
   scene.background = simulation.initSkyBox();
 
-  scene.add( simulation.fish_type_1 );
-  scene.add( simulation.fish_type_2 );
-  scene.add( simulation.sharks );
+  scene.add(simulation.fish_type_1);
+  scene.add(simulation.fish_type_2);
+  scene.add(simulation.sharks);
 
   const container = simulation.create_container();
-  scene.add( container );
+  scene.add(container);
 
   //#endregion
 
 
   //#region GUI
-  const gui = new dat.GUI( { width: Simualtion.configs.gui_width } );
+  const gui = new dat.GUI({ width: Simualtion.configs.gui_width });
 
-  gui.add( Simualtion.configs, "fish_number", 100, 500, 10 ).onChange( () => simulation.recreate_boids() );
-  gui.add( Simualtion.configs, "sharks_number", 1, 10, 1 ).onChange( () => simulation.recreate_boids() );
+  gui.add(Simualtion.configs, "fish_number", 100, 500, 10).onChange(() => simulation.recreate_boids());
+  gui.add(Simualtion.configs, "sharks_number", 1, 10, 1).onChange(() => simulation.recreate_boids());
 
-  gui.add( Simualtion.configs, "boid_size", 0.1, 2, 0.1 ).onChange( () => simulation.recreate_boids() );
+  gui.add(Simualtion.configs, "boid_size", 0.1, 2, 0.1).onChange(() => simulation.recreate_boids());
 
-  gui.add( Simualtion.configs, "fish_speed", 0.1, 1, 0.1 );
-  gui.add( Simualtion.configs, "shark_speed", 0.1, 2, 0.1 );
+  gui.add(Simualtion.configs, "fish_speed", 0.1, 1, 0.1);
+  gui.add(Simualtion.configs, "shark_speed", 0.1, 2, 0.1);
 
-  gui.add( Simualtion.configs, "aligment_force", 0, 0.5, 0.05 );
-  gui.add( Simualtion.configs, "cohesion_force", 0, 0.5, 0.05 );
-  gui.add( Simualtion.configs, "separation_force", 1, 1.5, 0.05 );
+  gui.add(Simualtion.configs, "aligment_force", 0, 0.5, 0.05);
+  gui.add(Simualtion.configs, "cohesion_force", 0, 0.5, 0.05);
+  gui.add(Simualtion.configs, "separation_force", 1, 1.5, 0.05);
 
-  gui.add( Simualtion.configs, "aligment_radius", 5, 30, 5 );
-  gui.add( Simualtion.configs, "cohesion_radius", 5, 30, 5 );
-  gui.add( Simualtion.configs, "separation_radius", 5, 30, 5 );
+  gui.add(Simualtion.configs, "aligment_radius", 5, 30, 5);
+  gui.add(Simualtion.configs, "cohesion_radius", 5, 30, 5);
+  gui.add(Simualtion.configs, "separation_radius", 5, 30, 5);
 
-  gui.add( Simualtion.configs, "container_scale", 1, 5, 1 ).onChange( () => container.scale.set( Simualtion.configs.container_scale, Simualtion.configs.container_scale, Simualtion.configs.container_scale ) );
-  gui.add( Simualtion.configs, "container_opacity", 0, 1, 0.1 ).onChange( () => container.material.opacity = Simualtion.configs.container_opacity );
+  gui.add(Simualtion.configs, "container_scale", 1, 5, 1).onChange(() => container.scale.set(Simualtion.configs.container_scale, Simualtion.configs.container_scale, Simualtion.configs.container_scale));
+  gui.add(Simualtion.configs, "container_opacity", 0, 1, 0.1).onChange(() => container.material.opacity = Simualtion.configs.container_opacity);
 
 
   //#endregion
@@ -623,17 +625,17 @@ function main () {
   const resize = () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize(window.innerWidth, window.innerHeight);
   }
-  window.addEventListener( "resize", resize, false );
+  window.addEventListener("resize", resize, false);
 
   // Animation loop
   const animate = () => {
 
     simulation.animate_boids();
 
-    renderer.render( scene, camera );
-    requestAnimationFrame( animate );
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
   }
   animate();
 
