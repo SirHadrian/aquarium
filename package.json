@@ -9,13 +9,13 @@
     "preview": "vite preview --port 3000"
   },
   "devDependencies": {
-    "typescript": "^5.2.2",
-    "vite": "^4.4.9"
+    "@types/dat.gui": "^0.7.10",
+    "@types/three": "^0.156.0"
   },
   "dependencies": {
-    "@types/dat.gui": "^0.7.10",
-    "@types/three": "^0.156.0",
     "dat.gui": "^0.7.9",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9",
     "three": "^0.156.1"
   }
 }
