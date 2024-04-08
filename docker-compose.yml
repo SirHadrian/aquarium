@@ -1,4 +1,3 @@
-version: '3'
 services:
   aquarium:
     image: aquarium:latest
